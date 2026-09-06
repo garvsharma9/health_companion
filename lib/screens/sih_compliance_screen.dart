@@ -75,7 +75,7 @@ class SihComplianceScreen extends StatelessWidget {
         title: const Text("Qualcomm SIH 26181 Compliance"),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0, bottom: 100.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -165,28 +165,36 @@ class SihComplianceScreen extends StatelessWidget {
                           Row(
                             children: [
                               Expanded(
-                                child: Text(
-                                  req['title']!,
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.bold,
-                                    color: textColor,
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    req['title']!,
+                                    style: TextStyle(
+                                      fontSize: 13.5,
+                                      fontWeight: FontWeight.bold,
+                                      color: textColor,
+                                    ),
                                   ),
                                 ),
                               ),
+                              const SizedBox(width: 6),
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 2),
+                                    horizontal: 8, vertical: 3),
                                 decoration: BoxDecoration(
                                   color: AppTheme.healthyGreen.withValues(alpha: 0.15),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: const Text(
-                                  "VERIFIED",
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppTheme.healthyGreen,
+                                child: const FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    "VERIFIED",
+                                    style: TextStyle(
+                                      fontSize: 9.5,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppTheme.healthyGreen,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -196,7 +204,7 @@ class SihComplianceScreen extends StatelessWidget {
                           Text(
                             req['detail']!,
                             style: TextStyle(
-                                fontSize: 12, color: subtitleColor),
+                                fontSize: 12, color: subtitleColor, height: 1.3),
                           ),
                         ],
                       ),

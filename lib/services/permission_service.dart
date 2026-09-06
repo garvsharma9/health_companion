@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -8,24 +9,29 @@ class PermissionService {
 
   /// Requests all necessary permissions (Location, SMS, Bluetooth)
   static Future<bool> requestAppPermissions() async {
-    final permissions = [
-      Permission.location,
-      Permission.locationWhenInUse,
-      Permission.sms,
-      Permission.bluetoothScan,
-      Permission.bluetoothConnect,
-    ];
+    if (kIsWeb) return true;
+    try {
+      final permissions = [
+        Permission.location,
+        Permission.locationWhenInUse,
+        Permission.sms,
+        Permission.bluetoothScan,
+        Permission.bluetoothConnect,
+      ];
 
-    Map<Permission, PermissionStatus> statuses = await permissions.request();
+      Map<Permission, PermissionStatus> statuses = await permissions.request();
 
-    bool allGranted = true;
-    statuses.forEach((permission, status) {
-      if (!status.isGranted && !status.isLimited) {
-        allGranted = false;
-      }
-    });
+      bool allGranted = true;
+      statuses.forEach((permission, status) {
+        if (!status.isGranted && !status.isLimited) {
+          allGranted = false;
+        }
+      });
 
-    return allGranted;
+      return allGranted;
+    } catch (_) {
+      return true;
+    }
   }
 
   /// Check if location permission is currently granted

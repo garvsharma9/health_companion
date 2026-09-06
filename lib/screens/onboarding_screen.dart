@@ -104,13 +104,16 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           ),
                         ),
                         const SizedBox(height: 36),
-                        Text(
-                          slide['title']!,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            slide['title']!,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -118,7 +121,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           slide['subtitle']!,
                           textAlign: TextAlign.center,
                           style: const TextStyle(
-                            fontSize: 16,
+                            fontSize: 15,
                             color: Colors.white70,
                             height: 1.4,
                           ),
@@ -155,15 +158,15 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24.0),
               child: SizedBox(
                 width: double.infinity,
-                height: 56,
+                height: 52,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.electricCyan,
-                    foregroundColor: Colors.black,
+                    foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(100),
                     ),
-                    elevation: 4,
+                    elevation: 0,
                   ),
                   onPressed: () {
                     if (_currentPage < _slides.length - 1) {
@@ -182,9 +185,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         ? 'GET STARTED'
                         : 'NEXT',
                     style: const TextStyle(
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      letterSpacing: 1.1,
+                      letterSpacing: 0.8,
                     ),
                   ),
                 ),

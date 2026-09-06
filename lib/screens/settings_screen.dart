@@ -4,6 +4,7 @@ import '../providers/theme_provider.dart';
 import '../providers/ble_provider.dart';
 import '../providers/onboarding_provider.dart';
 import '../theme/app_theme.dart';
+import '../widgets/glass_card.dart';
 import 'sih_compliance_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -20,90 +21,121 @@ class SettingsScreen extends ConsumerWidget {
     final cardBg = Theme.of(context).cardTheme.color ?? Colors.white;
 
     return Scaffold(
+      backgroundColor: isDark ? AppTheme.bgDark : AppTheme.bgLight,
       appBar: AppBar(
-        title: const Text("App Settings & Preferences"),
+        title: Text(
+          "App Settings & Preferences",
+          style: TextStyle(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black),
       ),
-      body: SingleChildScrollView(
+      body: Stack(
+        children: [
+          // Background ambient glows
+          if (isDark) ...[
+            Positioned(
+              top: -50,
+              right: -50,
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppTheme.primaryBlueLight.withValues(alpha: 0.15),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 100,
+              left: -50,
+              child: Container(
+                width: 250,
+                height: 250,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppTheme.visionPurple.withValues(alpha: 0.15),
+                ),
+              ),
+            ),
+          ],
+          SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // --- 1. APPEARANCE & THEME SWITCHER ---
             const Text(
-              "Appearance",
+              "APPEARANCE",
               style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF8E8E93),
+                letterSpacing: 0.8,
               ),
             ),
             const SizedBox(height: 10),
-            Container(
-              decoration: BoxDecoration(
-                color: cardBg,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.black.withValues(alpha: 0.08)),
-              ),
-              child: SwitchListTile(
-                secondary: Icon(
-                  isDark ? Icons.dark_mode : Icons.light_mode,
-                  color: isDark ? Colors.amberAccent : AppTheme.primaryBlueLight,
+            GlassCard(
+              padding: EdgeInsets.zero,
+              glowColor: isDark ? Colors.amberAccent : AppTheme.electricCyan,
+              child: Material(
+                color: Colors.transparent,
+                child: SwitchListTile(
+                  secondary: Icon(
+                    isDark ? Icons.dark_mode : Icons.light_mode,
+                    color: isDark ? Colors.amberAccent : AppTheme.electricCyan,
+                  ),
+                  title: Text(
+                    "Dark Mode Theme",
+                    style: TextStyle(fontWeight: FontWeight.bold, color: textColor),
+                  ),
+                  subtitle: Text(
+                    isDark ? "Apple OLED Black Palette" : "Clean White Porcelain Theme (Default)",
+                    style: TextStyle(fontSize: 12, color: subtitleColor),
+                  ),
+                  value: isDark,
+                  onChanged: (val) {
+                    ref.read(themeProvider.notifier).toggleTheme(val);
+                  },
                 ),
-                title: Text(
-                  "Dark Mode Theme",
-                  style: TextStyle(fontWeight: FontWeight.bold, color: textColor),
-                ),
-                subtitle: Text(
-                  isDark ? "Dark Midnight Palette" : "Clean White Porcelain Theme (Default)",
-                  style: TextStyle(fontSize: 12, color: subtitleColor),
-                ),
-                value: isDark,
-                onChanged: (val) {
-                  ref.read(themeProvider.notifier).toggleTheme(val);
-                },
               ),
             ),
             const SizedBox(height: 24),
 
-            // --- 2. DEMO SIMULATION CONTROLS (Discreet presentation hub) ---
-            Row(
-              children: [
-                const Icon(Icons.build_circle, size: 18, color: AppTheme.primaryBlueLight),
-                const SizedBox(width: 6),
-                Text(
-                  "Hardware Simulator & Demo Controls",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: textColor,
-                  ),
-                ),
-              ],
+            // --- 2. DEMO SIMULATION CONTROLS ---
+            const Text(
+              "HARDWARE SIMULATOR & DEMO CONTROLS",
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF8E8E93),
+                letterSpacing: 0.8,
+              ),
             ),
             const SizedBox(height: 10),
-            Container(
+            GlassCard(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: cardBg,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.black.withValues(alpha: 0.08)),
-              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(
-                      "Hardware Simulator Mode",
-                      style: TextStyle(fontWeight: FontWeight.bold, color: textColor),
+                  Material(
+                    color: Colors.transparent,
+                    child: SwitchListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(
+                        "Hardware Simulator Mode",
+                        style: TextStyle(fontWeight: FontWeight.bold, color: textColor),
+                      ),
+                      subtitle: Text(
+                        "Injects live sensor telemetry when ESP32 is not connected.",
+                        style: TextStyle(fontSize: 12, color: subtitleColor),
+                      ),
+                      value: bleState.isSimulating,
+                      onChanged: (val) {
+                        ref.read(bleProvider.notifier).toggleSimulator(val);
+                      },
                     ),
-                    subtitle: Text(
-                      "Injects live sensor telemetry when ESP32 is not connected.",
-                      style: TextStyle(fontSize: 12, color: subtitleColor),
-                    ),
-                    value: bleState.isSimulating,
-                    onChanged: (val) {
-                      ref.read(bleProvider.notifier).toggleSimulator(val);
-                    },
                   ),
                   const Divider(height: 20),
                   Text(
@@ -159,22 +191,18 @@ class SettingsScreen extends ConsumerWidget {
             const SizedBox(height: 24),
 
             // --- 3. USER PROFILE BASELINES ---
-            Text(
-              "User Personal Baselines",
+            const Text(
+              "USER PERSONAL BASELINES",
               style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: textColor,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF8E8E93),
+                letterSpacing: 0.8,
               ),
             ),
             const SizedBox(height: 10),
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: cardBg,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.black.withValues(alpha: 0.08)),
-              ),
+            GlassCard(
+              padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
                   _buildProfileRow("Target User Segment", "Elderly / Outdoor Worker", textColor, subtitleColor),
@@ -188,51 +216,51 @@ class SettingsScreen extends ConsumerWidget {
             const SizedBox(height: 24),
 
             // --- 4. APP MANAGEMENT & ABOUT SIH ---
-            Text(
-              "About & SIH Compliance",
+            const Text(
+              "ABOUT & SIH COMPLIANCE",
               style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: textColor,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF8E8E93),
+                letterSpacing: 0.8,
               ),
             ),
             const SizedBox(height: 10),
-            Container(
-              decoration: BoxDecoration(
-                color: cardBg,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.black.withValues(alpha: 0.08)),
-              ),
-              child: Column(
-                children: [
-                  ListTile(
-                    leading: const Icon(Icons.verified_outlined, color: AppTheme.healthyGreen),
-                    title: Text("SIH Problem 26181 Compliance Matrix",
-                        style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
-                    subtitle: Text("View hackathon hardware & software evaluation matrix",
-                        style: TextStyle(fontSize: 12, color: subtitleColor)),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const SihComplianceScreen()),
-                      );
-                    },
-                  ),
-                  const Divider(height: 1),
-                  ListTile(
-                    leading: const Icon(Icons.help_outline, color: AppTheme.primaryBlueLight),
-                    title: Text("Re-open Feature Onboarding Guide",
-                        style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
-                    subtitle: Text("View the Opera-style walkthrough slides again",
-                        style: TextStyle(fontSize: 12, color: subtitleColor)),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () {
-                      ref.read(onboardingProvider.notifier).resetOnboarding();
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
+            GlassCard(
+              padding: EdgeInsets.zero,
+              child: Material(
+                color: Colors.transparent,
+                child: Column(
+                  children: [
+                    ListTile(
+                      leading: const Icon(Icons.verified_outlined, color: AppTheme.healthyGreen),
+                      title: Text("SIH Problem 26181 Compliance Matrix",
+                          style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
+                      subtitle: Text("View hackathon hardware & software evaluation matrix",
+                          style: TextStyle(fontSize: 12, color: subtitleColor)),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const SihComplianceScreen()),
+                        );
+                      },
+                    ),
+                    const Divider(height: 1),
+                    ListTile(
+                      leading: const Icon(Icons.help_outline, color: AppTheme.electricCyan),
+                      title: Text("Re-open Feature Onboarding Guide",
+                          style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
+                      subtitle: Text("View the Opera-style walkthrough slides again",
+                          style: TextStyle(fontSize: 12, color: subtitleColor)),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () {
+                        ref.read(onboardingProvider.notifier).resetOnboarding();
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 24),
@@ -257,6 +285,8 @@ class SettingsScreen extends ConsumerWidget {
           ],
         ),
       ),
+      ],
+      ),
     );
   }
 
@@ -280,7 +310,10 @@ class SettingsScreen extends ConsumerWidget {
   }) {
     return ActionChip(
       avatar: Icon(icon, size: 14, color: color),
-      label: Text(label, style: TextStyle(fontSize: 11, color: color, fontWeight: FontWeight.bold)),
+      label: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(label, style: TextStyle(fontSize: 11, color: color, fontWeight: FontWeight.bold)),
+      ),
       backgroundColor: color.withValues(alpha: 0.12),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),

@@ -2,25 +2,31 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   // --- LIGHT THEME PALETTE ---
-  static const Color bgLight = Color(0xFFF8FAFC);
+  static const Color bgLight = Color(0xFFF2F2F7);
   static const Color surfaceLight = Color(0xFFFFFFFF);
   static const Color cardLight = Color(0xFFFFFFFF);
-  static const Color textPrimaryLight = Color(0xFF0F172A);
-  static const Color textSecondaryLight = Color(0xFF475569);
-  static const Color primaryBlueLight = Color(0xFF0284C7);
+  static const Color textPrimaryLight = Color(0xFF000000);
+  static const Color textSecondaryLight = Color(0xFF6C6C70);
+  static const Color primaryBlueLight = Color(0xFF007AFF);
 
-  // --- DARK THEME PALETTE ---
-  static const Color bgDark = Color(0xFF0A0F1D);
-  static const Color surfaceDark = Color(0xFF141C2E);
-  static const Color cardDark = Color(0xFF1E293B);
+  // --- DARK THEME PALETTE (Apple visionOS Spatial Glass) ---
+  static const Color bgDark = Color(0xFF0C0C10);
+  static const Color surfaceDark = Color(0xFF181820);
+  static const Color cardDark = Color(0xFF1E1E26);
 
-  // Shared Vivid Status Accent Colors
-  static const Color healthyGreen = Color(0xFF00C853);
-  static const Color warningAmber = Color(0xFFFF9800);
-  static const Color criticalRed = Color(0xFFEF4444);
-  static const Color electricCyan = Color(0xFF0284C7);
+  // Apple Spatial Vital Colors
+  static const Color appleHeartRed = Color(0xFFFF2D55);
+  static const Color appleOxygenCyan = Color(0xFF64D2FF);
+  static const Color appleTempAmber = Color(0xFFFF9500);
+  static const Color visionPurple = Color(0xFFA855F7);
 
-  /// Clean Modern White Theme (Default)
+  // Shared Status Accent Colors (Apple iOS / visionOS System Colors)
+  static const Color healthyGreen = Color(0xFF30D158);
+  static const Color warningAmber = Color(0xFFFF9500);
+  static const Color criticalRed = Color(0xFFFF3B30);
+  static const Color electricCyan = Color(0xFF0A84FF);
+
+  /// Clean Apple Porcelain Theme (Light Mode)
   static ThemeData get lightTheme {
     return ThemeData.light().copyWith(
       scaffoldBackgroundColor: bgLight,
@@ -32,22 +38,24 @@ class AppTheme {
         error: criticalRed,
       ),
       appBarTheme: const AppBarTheme(
-        backgroundColor: surfaceLight,
-        elevation: 0.5,
+        backgroundColor: bgLight,
+        elevation: 0,
+        scrolledUnderElevation: 0,
         centerTitle: false,
         iconTheme: IconThemeData(color: textPrimaryLight),
         titleTextStyle: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
           color: textPrimaryLight,
+          letterSpacing: -0.4,
         ),
       ),
       cardTheme: CardThemeData(
         color: cardLight,
-        elevation: 2,
-        shadowColor: Colors.black12,
+        elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(22),
+          side: const BorderSide(color: Color(0xFFE5E5EA), width: 1),
         ),
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
@@ -55,29 +63,32 @@ class AppTheme {
         selectedItemColor: primaryBlueLight,
         unselectedItemColor: textSecondaryLight,
         type: BottomNavigationBarType.fixed,
-        selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+        selectedLabelStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 11),
         unselectedLabelStyle: TextStyle(fontSize: 11),
-        elevation: 8,
+        elevation: 0,
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: surfaceLight,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       ),
       textTheme: const TextTheme(
         headlineLarge: TextStyle(
-          fontSize: 26,
+          fontSize: 28,
           fontWeight: FontWeight.bold,
           color: textPrimaryLight,
+          letterSpacing: -0.6,
         ),
         headlineMedium: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
           color: textPrimaryLight,
+          letterSpacing: -0.4,
         ),
         titleLarge: TextStyle(
           fontSize: 17,
           fontWeight: FontWeight.w600,
           color: textPrimaryLight,
+          letterSpacing: -0.3,
         ),
         bodyLarge: TextStyle(
           fontSize: 15,
@@ -91,7 +102,7 @@ class AppTheme {
     );
   }
 
-  /// Dark Mode Theme
+  /// Apple visionOS Spatial Glassmorphic Dark Theme
   static ThemeData get darkTheme {
     return ThemeData.dark().copyWith(
       scaffoldBackgroundColor: bgDark,
@@ -103,57 +114,64 @@ class AppTheme {
         error: criticalRed,
       ),
       appBarTheme: const AppBarTheme(
-        backgroundColor: bgDark,
+        backgroundColor: Colors.transparent,
         elevation: 0,
+        scrolledUnderElevation: 0,
         centerTitle: false,
         titleTextStyle: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
           color: Colors.white,
+          letterSpacing: -0.4,
         ),
       ),
       cardTheme: CardThemeData(
-        color: cardDark,
-        elevation: 4,
+        color: const Color(0xFF1E1E26).withValues(alpha: 0.60),
+        elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(22),
+          side: BorderSide(color: Colors.white.withValues(alpha: 0.12), width: 1.2),
         ),
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: surfaceDark,
+        backgroundColor: Color(0xFF12121A),
         selectedItemColor: electricCyan,
-        unselectedItemColor: Colors.white54,
+        unselectedItemColor: Color(0xFF8E8E93),
         type: BottomNavigationBarType.fixed,
-        selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+        selectedLabelStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 11),
         unselectedLabelStyle: TextStyle(fontSize: 11),
+        elevation: 0,
       ),
       dialogTheme: DialogThemeData(
-        backgroundColor: cardDark,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        backgroundColor: const Color(0xFF1E1E26),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       ),
       textTheme: const TextTheme(
         headlineLarge: TextStyle(
-          fontSize: 26,
+          fontSize: 28,
           fontWeight: FontWeight.bold,
           color: Colors.white,
+          letterSpacing: -0.6,
         ),
         headlineMedium: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
           color: Colors.white,
+          letterSpacing: -0.4,
         ),
         titleLarge: TextStyle(
           fontSize: 17,
           fontWeight: FontWeight.w600,
           color: Colors.white,
+          letterSpacing: -0.3,
         ),
         bodyLarge: TextStyle(
           fontSize: 15,
-          color: Colors.white70,
+          color: Colors.white,
         ),
         bodyMedium: TextStyle(
           fontSize: 13,
-          color: Colors.white60,
+          color: Color(0xFF9898A0),
         ),
       ),
     );

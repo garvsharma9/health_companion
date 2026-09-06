@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'services/hive_storage_service.dart';
@@ -56,6 +57,20 @@ class MainShellScreen extends StatefulWidget {
   State<MainShellScreen> createState() => _MainShellScreenState();
 }
 
+class _NavItemData {
+  final String label;
+  final IconData icon;
+  final IconData activeIcon;
+  final Color accentColor;
+
+  const _NavItemData({
+    required this.label,
+    required this.icon,
+    required this.activeIcon,
+    required this.accentColor,
+  });
+}
+
 class _MainShellScreenState extends State<MainShellScreen> {
   int _currentIndex = 0;
   late final PageController _pageController;
@@ -78,7 +93,6 @@ class _MainShellScreenState extends State<MainShellScreen> {
   final List<Widget> _screens = const [
     RepaintBoundary(child: DashboardScreen()),
     RepaintBoundary(child: BleDeviceScreen()),
-    RepaintBoundary(child: HealthInsightsScreen()),
     RepaintBoundary(child: EmergencySosScreen()),
   ];
 
@@ -124,6 +138,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: PageView.builder(
         controller: _pageController,
@@ -137,38 +152,151 @@ class _MainShellScreenState extends State<MainShellScreen> {
           return _buildCardPage(index, _screens[index]);
         },
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() => _currentIndex = index);
-          _pageController.animateToPage(
-            index,
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.fastOutSlowIn,
-          );
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard_outlined),
-            activeIcon: Icon(Icons.dashboard),
-            label: 'Dashboard',
+      bottomNavigationBar: _buildFloatingSpatialNavBar(context),
+    );
+  }
+
+  Widget _buildFloatingSpatialNavBar(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final items = [
+      const _NavItemData(
+        label: "Dashboard",
+        icon: Icons.grid_view_outlined,
+        activeIcon: Icons.grid_view_rounded,
+        accentColor: AppTheme.electricCyan,
+      ),
+      const _NavItemData(
+        label: "Hardware",
+        icon: Icons.bluetooth_outlined,
+        activeIcon: Icons.bluetooth_connected_rounded,
+        accentColor: AppTheme.appleOxygenCyan,
+      ),
+      const _NavItemData(
+        label: "Emergency",
+        icon: Icons.emergency_outlined,
+        activeIcon: Icons.emergency_rounded,
+        accentColor: AppTheme.criticalRed,
+      ),
+    ];
+
+    return SafeArea(
+      child: Align(
+        alignment: Alignment.bottomCenter,
+        child: Padding(
+          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 16),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(32),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+                child: Container(
+                  height: 64,
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? const Color(0xFF14141E).withValues(alpha: 0.75)
+                        : const Color(0xFFF5F5FA).withValues(alpha: 0.88),
+                    borderRadius: BorderRadius.circular(32),
+                    border: Border.all(
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.18)
+                          : Colors.black.withValues(alpha: 0.12),
+                      width: 1.2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: isDark ? 0.45 : 0.12),
+                        blurRadius: 24,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: List.generate(items.length, (index) {
+                      final item = items[index];
+                      final isSelected = _currentIndex == index;
+
+                      return Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() => _currentIndex = index);
+                            _pageController.animateToPage(
+                              index,
+                              duration: const Duration(milliseconds: 250),
+                              curve: Curves.easeOutCubic,
+                            );
+                          },
+                          behavior: HitTestBehavior.opaque,
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 220),
+                            curve: Curves.easeOutCubic,
+                            margin: const EdgeInsets.symmetric(horizontal: 3),
+                            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? item.accentColor.withValues(alpha: isDark ? 0.22 : 0.14)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(24),
+                              border: isSelected
+                                  ? Border.all(
+                                      color: item.accentColor.withValues(alpha: 0.45),
+                                      width: 1.2,
+                                    )
+                                  : null,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                AnimatedScale(
+                                  scale: isSelected ? 1.10 : 1.0,
+                                  duration: const Duration(milliseconds: 200),
+                                  child: Icon(
+                                    isSelected ? item.activeIcon : item.icon,
+                                    size: 20,
+                                    color: isSelected
+                                        ? item.accentColor
+                                        : (isDark
+                                            ? const Color(0xFF9898A0)
+                                            : const Color(0xFF6C6C70)),
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                                  child: Text(
+                                    item.label,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 10.5,
+                                      fontWeight: isSelected
+                                          ? FontWeight.bold
+                                          : FontWeight.w500,
+                                      color: isSelected
+                                          ? (isDark ? Colors.white : item.accentColor)
+                                          : (isDark
+                                              ? const Color(0xFF9898A0)
+                                              : const Color(0xFF6C6C70)),
+                                      letterSpacing: isSelected ? 0.1 : -0.1,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                ),
+              ),
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bluetooth_outlined),
-            activeIcon: Icon(Icons.bluetooth),
-            label: 'Hardware & BLE',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.analytics_outlined),
-            activeIcon: Icon(Icons.analytics),
-            label: 'Analytics',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.sos_outlined),
-            activeIcon: Icon(Icons.sos),
-            label: 'Emergency SOS',
-          ),
-        ],
+        ),
       ),
     );
   }

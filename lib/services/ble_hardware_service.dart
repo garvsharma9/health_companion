@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import '../models/telemetry_data.dart';
 import 'hive_storage_service.dart';
@@ -47,10 +48,12 @@ class BleHardwareService {
 
   /// Initialize BLE & Hardware Simulator
   static void init() {
-    isSimulating = HiveStorageService.isHardwareSimMode();
+    isSimulating = HiveStorageService.isHardwareSimMode() || kIsWeb;
     _currentTelemetry = HiveStorageService.getLatestTelemetry();
 
-    _listenToSystemConnectedDevices();
+    if (!kIsWeb) {
+      _listenToSystemConnectedDevices();
+    }
 
     if (isSimulating) {
       startSimulator();
