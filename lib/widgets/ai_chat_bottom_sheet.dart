@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:health_companion/theme/app_theme.dart';
+import '../providers/telemetry_provider.dart';
+import '../providers/activity_sleep_provider.dart';
+import '../services/local_ai_engine.dart';
 
-class AIChatBottomSheet extends StatefulWidget {
+class AIChatBottomSheet extends ConsumerStatefulWidget {
   const AIChatBottomSheet({super.key});
 
   @override
-  State<AIChatBottomSheet> createState() => _AIChatBottomSheetState();
+  ConsumerState<AIChatBottomSheet> createState() => _AIChatBottomSheetState();
 }
 
-class _AIChatBottomSheetState extends State<AIChatBottomSheet> {
+class _AIChatBottomSheetState extends ConsumerState<AIChatBottomSheet> {
   final TextEditingController _textController = TextEditingController();
   final List<Map<String, dynamic>> _messages = [
     {
@@ -37,49 +41,45 @@ class _AIChatBottomSheetState extends State<AIChatBottomSheet> {
       _textController.clear();
     });
 
-    // Simulate AI response after short delay
+    // Simulate processing delay for natural feel
     Future.delayed(const Duration(milliseconds: 800), () {
       if (!mounted) return;
+      
+      final telemetry = ref.read(currentTelemetryProvider);
+      final activitySleep = ref.read(activitySleepProvider);
+      
+      String aiResponse = "I'm sorry, I'm missing some vital telemetry data to answer that right now.";
+      if (telemetry != null) {
+        aiResponse = LocalAIEngine.generateResponse(text, telemetry, activitySleep);
+      }
+
       setState(() {
         _messages.add({
           'isUser': false,
-          'text': _generateResponse(text),
+          'text': aiResponse,
           'time': 'Just now',
         });
       });
     });
   }
 
-  String _generateResponse(String userQuery) {
-    final query = userQuery.toLowerCase();
-    if (query.contains('hr') || query.contains('heart rate') || query.contains('spike')) {
-      return "Your heart rate reached 108 BPM around 3:15 PM during your light afternoon activity. It quickly recovered to normal (72 BPM) within 8 minutes, indicating healthy cardiac elasticity!";
-    } else if (query.contains('spo2') || query.contains('oxygen')) {
-      return "Your SpO2 averaged 98.4% today, which is excellent! Oxygen levels remained steady even during rest, showing healthy respiratory output.";
-    } else if (query.contains('sleep') || query.contains('night')) {
-      return "To optimize sleep tonight: keep your bedroom temperature between 19°C–21°C, avoid heavy meals 2 hours before bedtime, and maintain ambient room humidity around 45%–50%.";
-    } else if (query.contains('aqi') || query.contains('environment') || query.contains('temp')) {
-      return "Current indoor AQI is 38 (Good). Humidity dropped to 35% in the afternoon—we recommend keeping a humidifier nearby or drinking extra water to stay hydrated.";
-    } else {
-      return "Based on your telemetric logs, your overall health parameters are stable with an 88/100 score. Stay hydrated, keep active, and reach out if you feel any fatigue!";
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.75,
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF14141B) : Colors.white,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-        border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.15) : const Color(0xFFE5E5EA),
-          width: 1,
+    return Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.75,
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF14141B) : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          border: Border.all(
+            color: isDark ? Colors.white.withValues(alpha: 0.15) : const Color(0xFFE5E5EA),
+            width: 1,
+          ),
         ),
-      ),
-      child: Column(
+        child: Column(
         children: [
           // Drag handle
           const SizedBox(height: 12),
@@ -258,6 +258,7 @@ class _AIChatBottomSheetState extends State<AIChatBottomSheet> {
           ),
         ],
       ),
+    ),
     );
   }
 }

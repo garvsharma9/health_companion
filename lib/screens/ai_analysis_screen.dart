@@ -4,7 +4,6 @@ import 'package:health_companion/theme/app_theme.dart';
 import 'package:health_companion/widgets/glass_card.dart';
 import '../models/anomaly_event.dart';
 import '../providers/ml_risk_provider.dart';
-import '../services/hive_storage_service.dart';
 import '../widgets/ai_chat_bottom_sheet.dart';
 
 class AIAnalysisScreen extends ConsumerStatefulWidget {
@@ -34,9 +33,9 @@ class _AIAnalysisScreenState extends ConsumerState<AIAnalysisScreen> {
     // Providers for Analytics sections
     final mlResult = ref.watch(mlInferenceProvider);
     final anomalyHistory = ref.watch(anomalyHistoryProvider);
-    final cachedHistory = HiveStorageService.getCachedTelemetryHistory();
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: isDark ? AppTheme.bgDark : AppTheme.bgLight,
       appBar: AppBar(
         title: Text(

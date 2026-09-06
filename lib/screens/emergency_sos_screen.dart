@@ -243,7 +243,7 @@ class _EmergencySosScreenState extends ConsumerState<EmergencySosScreen>
     final subtitleColor = Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey;
 
     return Scaffold(
-      backgroundColor: isDark ? AppTheme.bgDark : AppTheme.bgLight,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(
           "Emergency SOS & Caregivers",
@@ -690,37 +690,28 @@ class _EmergencySosScreenState extends ConsumerState<EmergencySosScreen>
     required Color color,
     required VoidCallback onTap,
   }) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: color.withValues(alpha: 0.4)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, color: color, size: 28),
-              const SizedBox(height: 8),
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    color: color,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                  ),
-                ),
+    return GlassCard(
+      glowColor: color,
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+      borderRadius: 16,
+      onTap: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color, size: 28),
+          const SizedBox(height: 8),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

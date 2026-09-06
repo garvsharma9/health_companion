@@ -43,7 +43,7 @@ class _BleDeviceScreenState extends ConsumerState<BleDeviceScreen>
     });
 
     return Scaffold(
-      backgroundColor: isDark ? AppTheme.bgDark : AppTheme.bgLight,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(
           "Connected Devices",

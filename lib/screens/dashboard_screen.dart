@@ -10,6 +10,9 @@ import 'settings_screen.dart';
 import '../providers/health_trends_provider.dart';
 import '../widgets/health_chart_card.dart';
 import 'ai_analysis_screen.dart';
+import '../providers/activity_sleep_provider.dart';
+import 'activity_detail_screen.dart';
+import 'sleep_detail_screen.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -30,13 +33,17 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
     final mlResult = ref.watch(mlInferenceProvider);
     final bleState = ref.watch(bleProvider);
     final trendsState = ref.watch(healthTrendsProvider);
+    final activitySleepState = ref.watch(activitySleepProvider);
 
     final Color riskColor = _getRiskColor(mlResult.overallSeverity);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         title: Row(
           children: [
             Flexible(
@@ -235,6 +242,62 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
                       ),
                     ],
                   ),
+                ),
+                const SizedBox(height: 16),
+
+                // --- 1.5. ACTIVITY & SLEEP PILLS ---
+                Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ActivityDetailScreen())),
+                        child: GlassCard(
+                          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                          glowColor: Colors.lightGreen,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(Icons.directions_walk, size: 16, color: Colors.lightGreen),
+                                  const SizedBox(width: 4),
+                                  Text("ACTIVITY", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: isDark ? Colors.white70 : Colors.black54)),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Text(activitySleepState.activityLevel, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
+                              Text("${activitySleepState.steps} steps", style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : Colors.black54)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SleepDetailScreen())),
+                        child: GlassCard(
+                          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                          glowColor: Colors.indigoAccent,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(Icons.bedtime, size: 16, color: Colors.indigoAccent),
+                                  const SizedBox(width: 4),
+                                  Text("SLEEP", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: isDark ? Colors.white70 : Colors.black54)),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Text(activitySleepState.sleepState, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
+                              Text("${activitySleepState.sleepDurationMinutes ~/ 60}h ${activitySleepState.sleepDurationMinutes % 60}m", style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : Colors.black54)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 16),
 

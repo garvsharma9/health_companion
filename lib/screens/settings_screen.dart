@@ -18,7 +18,6 @@ class SettingsScreen extends ConsumerWidget {
 
     final textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
     final subtitleColor = Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey;
-    final cardBg = Theme.of(context).cardTheme.color ?? Colors.white;
 
     return Scaffold(
       backgroundColor: isDark ? AppTheme.bgDark : AppTheme.bgLight,
@@ -174,6 +173,22 @@ class SettingsScreen extends ConsumerWidget {
                         icon: Icons.accessibility_new,
                         color: Colors.red,
                         type: "fall",
+                      ),
+                      _buildSimChip(
+                        context,
+                        ref,
+                        label: "Walking",
+                        icon: Icons.directions_walk,
+                        color: Colors.lightGreen,
+                        type: "walking",
+                      ),
+                      _buildSimChip(
+                        context,
+                        ref,
+                        label: "Deep Sleep",
+                        icon: Icons.bedtime,
+                        color: Colors.indigoAccent,
+                        type: "sleep",
                       ),
                       _buildSimChip(
                         context,

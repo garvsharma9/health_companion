@@ -155,6 +155,23 @@ class BleHardwareService {
         _rawTerminalLogController
             .add("[INJECT] Reset to Healthy Baseline Telemetry.");
         break;
+      case 'walking':
+        _currentTelemetry = _currentTelemetry.copyWithFluctuations(
+          customAccelZ: 12.5,
+          customHr: 98.0,
+        );
+        _rawTerminalLogController
+            .add("[INJECT] IMU Walking Activity Detected.");
+        break;
+      case 'sleep':
+        _currentTelemetry = _currentTelemetry.copyWithFluctuations(
+          customAccelZ: 9.81,
+          customHr: 58.0,
+          customSpO2: 97.0,
+        );
+        _rawTerminalLogController
+            .add("[INJECT] IMU Deep Sleep Detected.");
+        break;
     }
     _telemetryStreamController.add(_currentTelemetry);
     HiveStorageService.cacheLatestTelemetry(_currentTelemetry);
