@@ -67,10 +67,11 @@ class EmergencySmsService {
     }
   }
 
-  /// Sends emergency SMS automatically in the background without opening SMS composer
+  /// Sends emergency SMS automatically in the background and auto-dials primary caregiver
   static Future<String> sendEmergencySms({
     required String alertTitle,
     String? customLocation,
+    String? vitalsData,
   }) async {
     final contacts = HiveStorageService.getEmergencyContacts();
     if (contacts.isEmpty) {
@@ -79,9 +80,11 @@ class EmergencySmsService {
     }
 
     final locationDetails = customLocation ?? await getCurrentGpsLocation();
+    
+    String vitalsString = vitalsData != null ? "Vitals: $vitalsData\n" : "";
 
     final messageText =
-        "EMERGENCY HEALTH ALERT!\n$alertTitle\nLocation: $locationDetails\nSent automatically by SIH Health Companion Wearable.";
+        "EMERGENCY HEALTH ALERT!\n$alertTitle\n$vitalsString\nLocation: $locationDetails\nSent automatically by SIH Health Companion Wearable.";
 
     int successCount = 0;
     List<String> failedNumbers = [];
@@ -101,11 +104,14 @@ class EmergencySmsService {
         failedNumbers.add(contact.phoneNumber);
       }
     }
+    
+    // Auto-dial Primary Caregiver
+    _autoDialPrimaryCaregiver(contacts);
 
     if (successCount > 0) {
       speakAlert(
-          "Emergency alert SMS sent automatically to $successCount caregiver contacts with your exact live location.");
-      return "Emergency SMS sent automatically to $successCount contacts!\nLocation: $locationDetails";
+          "Emergency alert SMS sent automatically to $successCount caregiver contacts. Calling primary caregiver now.");
+      return "Emergency SMS sent to $successCount contacts!\nCalling Primary Caregiver...";
     } else {
       // Fallback to url_launcher sms composer if background method fails
       final recipients = contacts.map((c) => c.phoneNumber).join(',');
@@ -114,12 +120,37 @@ class EmergencySmsService {
 
       try {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
-        speakAlert("SMS app opened for emergency dispatch.");
-        return "Opened SMS app to dispatch emergency alert.";
+        speakAlert("SMS app opened for emergency dispatch. Calling primary caregiver now.");
+        return "Opened SMS app to dispatch alert. Calling Primary Caregiver...";
       } catch (e) {
         speakAlert("Failed to send emergency SMS.");
         return "Direct SMS & Fallback failed: $e";
       }
+    }
+  }
+
+  static Future<void> _autoDialPrimaryCaregiver(List<dynamic> contacts) async {
+    try {
+      if (contacts.isEmpty) return;
+      
+      dynamic primaryContact = contacts.first;
+      for (var c in contacts) {
+        if (c.isPrimary == true) {
+          primaryContact = c;
+          break;
+        }
+      }
+      
+      // Strip any spaces, dashes, or brackets from the phone number so the OS doesn't reject the intent
+      String cleanPhone = primaryContact.phoneNumber.replaceAll(RegExp(r'[^\d+]'), '');
+      
+      print("Attempting to directly dial primary caregiver: $cleanPhone");
+      
+      // Use our native MethodChannel to directly call the number, bypassing the dialer UI
+      final success = await _smsChannel.invokeMethod('directCall', {'phone': cleanPhone});
+      print("directCall returned: $success");
+    } catch (e) {
+      print("Failed to directly dial primary caregiver: $e");
     }
   }
 }

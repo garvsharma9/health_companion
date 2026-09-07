@@ -45,6 +45,26 @@ class MainActivity : FlutterActivity() {
                         result.error("INVALID_ARGS", "Phone number or message is null", null)
                     }
                 }
+                "directCall" -> {
+                    val phoneNumber = call.argument<String>("phone")
+                    if (phoneNumber != null) {
+                        try {
+                            val intent = Intent(Intent.ACTION_CALL)
+                            intent.data = android.net.Uri.parse("tel:$phoneNumber")
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            
+                            // Force the call to start on speakerphone
+                            intent.putExtra("android.telecom.extra.START_CALL_WITH_SPEAKERPHONE", true)
+                            
+                            startActivity(intent)
+                            result.success(true)
+                        } catch (e: Exception) {
+                            result.error("CALL_FAILED", e.message, null)
+                        }
+                    } else {
+                        result.error("INVALID_ARGS", "Phone number is null", null)
+                    }
+                }
                 "enableBluetooth" -> {
                     try {
                         val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager

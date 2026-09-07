@@ -15,6 +15,7 @@ class PermissionService {
         Permission.location,
         Permission.locationWhenInUse,
         Permission.sms,
+        Permission.phone,
         Permission.bluetoothScan,
         Permission.bluetoothConnect,
       ];

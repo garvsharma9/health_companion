@@ -2,9 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/emergency_contact.dart';
 import '../services/hive_storage_service.dart';
 import '../services/emergency_sms_service.dart';
+import '../providers/telemetry_provider.dart';
 
 class EmergencyNotifier extends StateNotifier<List<EmergencyContact>> {
-  EmergencyNotifier() : super(HiveStorageService.getEmergencyContacts());
+  final Ref ref;
+  EmergencyNotifier(this.ref) : super(HiveStorageService.getEmergencyContacts());
 
   void addContact(String name, String phone, String relationship) async {
     final contact = EmergencyContact(
@@ -24,13 +26,17 @@ class EmergencyNotifier extends StateNotifier<List<EmergencyContact>> {
   }
 
   Future<String> triggerEmergencySos(String alertTitle) async {
+    final telemetry = ref.read(currentTelemetryProvider);
+    String vitals = "HR: ${telemetry.heartRate.toStringAsFixed(1)} BPM, SpO2: ${telemetry.spO2.toStringAsFixed(1)}%";
+    
     return await EmergencySmsService.sendEmergencySms(
       alertTitle: alertTitle,
+      vitalsData: vitals,
     );
   }
 }
 
 final emergencyProvider =
     StateNotifierProvider<EmergencyNotifier, List<EmergencyContact>>((ref) {
-  return EmergencyNotifier();
+  return EmergencyNotifier(ref);
 });
