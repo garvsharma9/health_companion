@@ -315,5 +315,5 @@ class LessSensitivePageScrollPhysics extends PageScrollPhysics {
   }
 
   @override
-  double get dragStartDistanceMotionThreshold => 8.0;
+  double get dragStartDistanceMotionThreshold => 45.0;
 }
