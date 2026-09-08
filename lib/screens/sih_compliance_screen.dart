@@ -1,7 +1,10 @@
+import '../providers/locale_provider.dart';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 
-class SihComplianceScreen extends StatelessWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class SihComplianceScreen extends ConsumerWidget {
   const SihComplianceScreen({super.key});
 
   final List<Map<String, String>> _requirements = const [
@@ -64,7 +67,7 @@ class SihComplianceScreen extends StatelessWidget {
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = Theme.of(context).cardTheme.color ?? (isDark ? AppTheme.cardDark : Colors.white);
     final textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
@@ -72,7 +75,7 @@ class SihComplianceScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Qualcomm SIH 26181 Compliance"),
+        title: Text(ref.tr("Qualcomm SIH 26181 Compliance")),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0, bottom: 100.0),

@@ -5,7 +5,9 @@ import 'package:geolocator/geolocator.dart';
 import '../providers/emergency_provider.dart';
 import '../services/permission_service.dart';
 import '../services/emergency_sms_service.dart';
+import '../providers/ble_provider.dart';
 import '../theme/app_theme.dart';
+import '../providers/locale_provider.dart';
 import '../widgets/glass_card.dart';
 import 'disaster_search_screen.dart';
 
@@ -55,10 +57,10 @@ class _EmergencySosScreenState extends ConsumerState<EmergencySosScreen>
       if (!isEnabled && mounted) {
         if (!isAutoRefresh) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("GPS is disabled on phone. Opening Location Settings..."),
+            SnackBar(
+              content: Text(ref.tr("gps_disabled")),
               backgroundColor: AppTheme.warningAmber,
-              duration: Duration(seconds: 2),
+              duration: const Duration(seconds: 2),
               behavior: SnackBarBehavior.floating,
             ),
           );
@@ -67,7 +69,7 @@ class _EmergencySosScreenState extends ConsumerState<EmergencySosScreen>
       }
       final loc = await EmergencySmsService.getCurrentGpsLocation()
           .timeout(const Duration(seconds: 4), onTimeout: () {
-        return "GPS (Cached): Lat 28.6139° N, Lng 77.2090° E\nMap: https://maps.google.com/?q=28.6139,77.2090";
+        return ref.tr("gps_cached");
       });
       if (mounted) {
         setState(() {
@@ -77,7 +79,7 @@ class _EmergencySosScreenState extends ConsumerState<EmergencySosScreen>
     } catch (_) {
       if (mounted) {
         setState(() {
-          _currentGpsText = "GPS: Lat 28.6139° N, Lng 77.2090° E";
+          _currentGpsText = ref.tr("gps_error");
         });
       }
     } finally {
@@ -131,7 +133,7 @@ class _EmergencySosScreenState extends ConsumerState<EmergencySosScreen>
     await PermissionService.requestAppPermissions();
     final result = await ref
         .read(emergencyProvider.notifier)
-        .triggerEmergencySos("MANUAL EMERGENCY SOS BUTTON TRIGGERED");
+        .triggerEmergencySos(ref.tr("manual_sos_triggered"));
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -153,9 +155,9 @@ class _EmergencySosScreenState extends ConsumerState<EmergencySosScreen>
                 ],
               ),
               const SizedBox(height: 8),
-              const Text(
-                "Calling user-added contacts, nearest ambulance, and nearby paid caregivers...",
-                style: TextStyle(fontSize: 11, color: Colors.white70),
+              Text(
+                ref.tr("sos_dispatch_info"),
+                style: const TextStyle(fontSize: 11, color: Colors.white70),
               ),
             ],
           ),
@@ -173,35 +175,35 @@ class _EmergencySosScreenState extends ConsumerState<EmergencySosScreen>
   void _showAddContactDialog() {
     final nameCtrl = TextEditingController();
     final phoneCtrl = TextEditingController();
-    final relationCtrl = TextEditingController(text: "Family");
+    final relationCtrl = TextEditingController(text: ref.tr("family"));
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Add Caregiver Contact", style: TextStyle(fontSize: 16)),
+        title: Text(ref.tr("add_caregiver"), style: const TextStyle(fontSize: 16)),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: nameCtrl,
-                decoration: const InputDecoration(
-                  labelText: "Full Name",
+                decoration: InputDecoration(
+                  labelText: ref.tr("full_name"),
                 ),
               ),
               const SizedBox(height: 10),
               TextField(
                 controller: phoneCtrl,
                 keyboardType: TextInputType.phone,
-                decoration: const InputDecoration(
-                  labelText: "Phone Number (+91...)",
+                decoration: InputDecoration(
+                  labelText: ref.tr("phone_number"),
                 ),
               ),
               const SizedBox(height: 10),
               TextField(
                 controller: relationCtrl,
-                decoration: const InputDecoration(
-                  labelText: "Relationship (e.g. Son, Doctor)",
+                decoration: InputDecoration(
+                  labelText: ref.tr("relationship"),
                 ),
               ),
             ],
@@ -210,7 +212,7 @@ class _EmergencySosScreenState extends ConsumerState<EmergencySosScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
+            child: Text(ref.tr("cancel")),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -227,7 +229,7 @@ class _EmergencySosScreenState extends ConsumerState<EmergencySosScreen>
                 Navigator.pop(context);
               }
             },
-            child: const Text("SAVE"),
+            child: Text(ref.tr("save")),
           ),
         ],
       ),
@@ -246,7 +248,7 @@ class _EmergencySosScreenState extends ConsumerState<EmergencySosScreen>
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(
-          "Emergency SOS & Caregivers",
+          ref.tr("emergency_sos_title"),
           style: TextStyle(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
@@ -300,9 +302,9 @@ class _EmergencySosScreenState extends ConsumerState<EmergencySosScreen>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              "LIVE EMERGENCY LOCATION",
-                              style: TextStyle(
+                            Text(
+                              ref.tr("live_location_title"),
+                              style: const TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w700,
                                 color: AppTheme.electricCyan,
@@ -326,7 +328,7 @@ class _EmergencySosScreenState extends ConsumerState<EmergencySosScreen>
                               )
                             : const Icon(Icons.refresh, size: 18),
                         onPressed: _fetchLiveLocation,
-                        tooltip: "Refresh GPS Location",
+                        tooltip: ref.tr("refresh_gps"),
                       ),
                     ],
                   ),
@@ -400,8 +402,8 @@ class _EmergencySosScreenState extends ConsumerState<EmergencySosScreen>
                                       fit: BoxFit.scaleDown,
                                       child: Text(
                                         _isHoldingSos
-                                            ? "HOLDING..."
-                                            : "HOLD FOR SOS",
+                                            ? ref.tr("holding")
+                                            : ref.tr("hold_for_sos"),
                                         style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
@@ -465,10 +467,10 @@ class _EmergencySosScreenState extends ConsumerState<EmergencySosScreen>
                         ),
                       ),
                       icon: const Icon(Icons.add, size: 14),
-                      label: const FittedBox(
+                      label: FittedBox(
                         fit: BoxFit.scaleDown,
-                        child: Text("ADD",
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
+                        child: Text(ref.tr("add_caps"),
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
                       ),
                       onPressed: _showAddContactDialog,
                     ),
@@ -480,7 +482,7 @@ class _EmergencySosScreenState extends ConsumerState<EmergencySosScreen>
                     padding: const EdgeInsets.all(20),
                     child: Center(
                       child: Text(
-                        "No emergency contacts added yet.\nTap 'ADD' to add caregiver phone details.",
+                        "No emergency contacts added yet.\nTap ${ref.tr('add_caps')} to add caregiver phone details.",
                         textAlign: TextAlign.center,
                         style: TextStyle(color: subtitleColor, fontSize: 13, height: 1.4),
                       ),
@@ -551,7 +553,7 @@ class _EmergencySosScreenState extends ConsumerState<EmergencySosScreen>
                     Expanded(
                       child: _buildDisasterButton(
                         context: context,
-                        label: "Flood",
+                        label: ref.tr("Flood"),
                         icon: Icons.flood,
                         color: AppTheme.primaryBlueLight,
                         onTap: () => _triggerDisasterResponse(context, "Flood"),
@@ -561,7 +563,7 @@ class _EmergencySosScreenState extends ConsumerState<EmergencySosScreen>
                     Expanded(
                       child: _buildDisasterButton(
                         context: context,
-                        label: "Cyclone",
+                        label: ref.tr("Cyclone"),
                         icon: Icons.cyclone,
                         color: AppTheme.visionPurple,
                         onTap: () => _triggerDisasterResponse(context, "Cyclone"),
@@ -571,7 +573,7 @@ class _EmergencySosScreenState extends ConsumerState<EmergencySosScreen>
                     Expanded(
                       child: _buildDisasterButton(
                         context: context,
-                        label: "Disaster",
+                        label: ref.tr("Disaster"),
                         icon: Icons.warning_amber_rounded,
                         color: Colors.orange,
                         onTap: () => _triggerDisasterResponse(context, "General Disaster"),
@@ -594,7 +596,7 @@ class _EmergencySosScreenState extends ConsumerState<EmergencySosScreen>
                 const SizedBox(height: 14),
                 _buildGuideTile(
                   context,
-                  title: "Heat Stroke Emergency Protocol",
+                  title: ref.tr("Heat Stroke Emergency Protocol"),
                   subtitle:
                       "Move to shade immediately. Apply cold water to neck, armpits, and groin. Sip water slowly.",
                   icon: Icons.wb_sunny_outlined,
@@ -603,7 +605,7 @@ class _EmergencySosScreenState extends ConsumerState<EmergencySosScreen>
                 const SizedBox(height: 12),
                 _buildGuideTile(
                   context,
-                  title: "Severe Air Pollution & Asthma First-Aid",
+                  title: ref.tr("Severe Air Pollution & Asthma First-Aid"),
                   subtitle:
                       "Stay indoors with doors closed. Use prescribed bronchodilator inhaler. Wear N95 respirator.",
                   icon: Icons.masks_outlined,
@@ -612,7 +614,7 @@ class _EmergencySosScreenState extends ConsumerState<EmergencySosScreen>
                 const SizedBox(height: 12),
                 _buildGuideTile(
                   context,
-                  title: "Flood & Disaster Evacuation Protocol",
+                  title: ref.tr("Flood & Disaster Evacuation Protocol"),
                   subtitle:
                       "Keep wearable active. Move to elevated ground. Avoid touching electrical poles or submerged wires.",
                   icon: Icons.flood_outlined,

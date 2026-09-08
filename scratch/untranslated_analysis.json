@@ -1,0 +1,200 @@
+{
+  "main.dart": {
+    "tr_keys": [
+      "hardware",
+      "emergency",
+      "dashboard"
+    ],
+    "text_strings": []
+  },
+  "screens/activity_detail_screen.dart": {
+    "tr_keys": [
+      "current_status",
+      "hours_short"
+    ],
+    "text_strings": [
+      "Activity & Steps"
+    ]
+  },
+  "screens/ai_analysis_screen.dart": {
+    "tr_keys": [
+      "ai_report_title"
+    ],
+    "text_strings": [
+      "TELEMETRY INSIGHTS",
+      "COMPREHENSIVE HEALTH SCORE",
+      "Optimal & Stable",
+      "AI PERSONALIZED RECOMMENDATIONS",
+      "100% Offline Privacy",
+      "LOGGED HEALTH ANOMALIES",
+      "No health anomalies recorded yet.\\nAll vitals are safe and within normal baseline.",
+      "88",
+      "Recommendation: ${event.recommendation}",
+      "ACTIONABLE LIFESTYLE TIPS",
+      "Vagal Tone & Recovery",
+      "Ask AI Assistant",
+      "Over the past 24-hour evaluation cycle, your vital signals demonstrated high homeostasis and healthy autonomic adaptability. Resting heart rate averaged 68 BPM with normal circadian dip during REM sleep cycles.",
+      "Detailed Executive Summary",
+      "Heart rate recovery post-activity averaged 18 BPM drop in 60s, reflecting strong vagal tone.",
+      "Inference: ${mlResult.inferenceTimeMs} ms",
+      "Based on last 24h biometric & sensor telemetry",
+      "ON-DEVICE EDGE AI EXECUTION"
+    ]
+  },
+  "screens/ble_device_screen.dart": {
+    "tr_keys": [
+      "connected_caps",
+      "connecting_caps",
+      "connect_caps"
+    ],
+    "text_strings": [
+      "Bluetooth is Turned Off",
+      "NEARBY BLE DEVICES (${bleState.discoveredDevices.where((d) => d.name.trim().isNotEmpty).length})",
+      "Note: Bluetooth Speakers / Headphones use Classic Bluetooth (A2DP Audio) and do not broadcast BLE sensor telemetry. Only BLE GATT Wearables & ESP32 sensor hardware appear in BLE scanning.",
+      "Connected Devices",
+      "HARDWARE SENSOR ARRAY",
+      "ID: ${device.id} • RSSI: ${device.rssi} dBm",
+      "Turn ON Bluetooth in phone settings to pair with ESP32 wearable."
+    ]
+  },
+  "screens/dashboard_screen.dart": {
+    "tr_keys": [
+      "sleep_duration",
+      "sleep",
+      "scanning_wearable",
+      "wearable_disconnected",
+      "steps_count",
+      "activity",
+      "risk",
+      "esp32_active"
+    ],
+    "text_strings": [
+      "View Full AI Analysis Report",
+      "BODY VITALS",
+      "LIVE SENSORS",
+      "${mlResult.riskScore.toStringAsFixed(0)}%",
+      "HEALTH TRENDS",
+      "24h",
+      "${telemetry.batteryLevel}%",
+      "7d",
+      "ENVIRONMENTAL AWARENESS"
+    ]
+  },
+  "screens/disaster_search_screen.dart": {
+    "tr_keys": [
+      "return_dashboard"
+    ],
+    "text_strings": [
+      "Help Dispatched!",
+      "Broadcasting ${widget.disasterType} Alert",
+      "Searching for nearest Govt. Disaster Control, Army Forces, and specialized response units...",
+      "Nearest Disaster Control teams and available army forces have been notified with your exact GPS coordinates and are en route."
+    ]
+  },
+  "screens/emergency_sos_screen.dart": {
+    "tr_keys": [
+      "gps_disabled",
+      "add_caps",
+      "full_name",
+      "phone_number",
+      "manual_sos_triggered",
+      "emergency_sos_title",
+      "refresh_gps",
+      "holding",
+      "gps_error",
+      "family",
+      "sos_dispatch_info",
+      "relationship",
+      "hold_for_sos",
+      "add_caregiver",
+      "save",
+      "cancel",
+      "gps_cached",
+      "live_location_title"
+    ],
+    "text_strings": [
+      "CAREGIVER CONTACTS",
+      "OFFLINE FIRST-AID DISASTER GUIDES",
+      "${c.phoneNumber} • ${c.relationship}",
+      "Sends SMS with GPS coordinates.\\nCalls emergency contacts, nearest ambulance &\\nnearest trained caregivers (paid response) for fastest help.",
+      "ULTRA FAST DISASTER RESPONSE",
+      "No emergency contacts added yet.\\nTap ${ref.tr("
+    ]
+  },
+  "screens/onboarding_screen.dart": {
+    "tr_keys": [
+      "skip",
+      "next",
+      "get_started"
+    ],
+    "text_strings": [
+      "English",
+      "हिन्दी"
+    ]
+  },
+  "screens/settings_screen.dart": {
+    "tr_keys": [
+      "simulated_payload",
+      "reopen_onboarding_desc",
+      "appearance",
+      "reopen_onboarding",
+      "language",
+      "apple_oled",
+      "clean_white",
+      "sih_info",
+      "sih_info_desc",
+      "app_settings",
+      "dark_mode"
+    ],
+    "text_strings": [
+      "Hardware Simulator Mode",
+      "Switch app language to Hindi",
+      "HARDWARE SIMULATOR & DEMO CONTROLS",
+      "ABOUT & SIH COMPLIANCE",
+      "हिन्दी (Hindi)",
+      "Injects live sensor telemetry when ESP32 is not connected.",
+      "1-Tap Anomaly Simulation Triggers",
+      "Personal Health Companion • v1.0.0 (On-Device AI)",
+      "SIH Problem Statement 26181",
+      "USER PERSONAL BASELINES"
+    ]
+  },
+  "screens/sih_compliance_screen.dart": {
+    "tr_keys": [],
+    "text_strings": [
+      "8 Core Requirements Compliance Matrix",
+      "Qualcomm SIH 26181 Compliance",
+      "On-Device AI Early Warning Disaster-Resilient Health Wearable Platform (Qualcomm)",
+      "Built specifically for heatwaves, floods, smog spikes, outdoor laborers, elderly individuals living alone, and rural communities with zero internet connectivity.",
+      "VERIFIED",
+      "SIH Problem Statement 26181"
+    ]
+  },
+  "screens/sleep_detail_screen.dart": {
+    "tr_keys": [
+      "current_status",
+      "deep",
+      "awake",
+      "light",
+      "hours_short"
+    ],
+    "text_strings": [
+      "Sleep Quality"
+    ]
+  },
+  "widgets/ai_chat_bottom_sheet.dart": {
+    "tr_keys": [],
+    "text_strings": [
+      "AI Health Assistant",
+      "Online • Continuous Vitals Monitoring"
+    ]
+  },
+  "widgets/glass_card.dart": {
+    "tr_keys": [],
+    "text_strings": []
+  },
+  "widgets/health_chart_card.dart": {
+    "tr_keys": [],
+    "text_strings": []
+  }
+}

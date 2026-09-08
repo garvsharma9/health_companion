@@ -120,7 +120,7 @@ class BleNotifier extends StateNotifier<BleState> {
     state = state.copyWith(
       isScanning: true,
       discoveredDevices: [],
-      statusMessage: "Scanning for ESP32 devices...",
+      statusMessage: "scanning_devices",
     );
     BleHardwareService.startBleScan((device) {
       final list = List<DiscoveredDevice>.from(state.discoveredDevices);

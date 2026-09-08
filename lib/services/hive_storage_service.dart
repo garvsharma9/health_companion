@@ -15,12 +15,22 @@ class HiveStorageService {
   static late Box _contactsBox;
   static late Box _settingsBox;
 
+  static TelemetryData? _latestTelemetryCache;
+  static List<TelemetryData>? _historyCache;
+  static DateTime _lastVitalsDiskSave = DateTime.fromMillisecondsSinceEpoch(0);
+  static DateTime _lastAnomalyLogTime = DateTime.fromMillisecondsSinceEpoch(0);
+  static String? _lastAnomalyTitle;
+
   static Future<void> init() async {
     await Hive.initFlutter();
     _vitalsBox = await Hive.openBox(_vitalsBoxName);
     _anomaliesBox = await Hive.openBox(_anomaliesBoxName);
     _contactsBox = await Hive.openBox(_contactsBoxName);
     _settingsBox = await Hive.openBox(_settingsBoxName);
+
+    // Warm up memory cache on startup
+    _latestTelemetryCache = _getLatestTelemetryFromDisk();
+    _historyCache = _getCachedTelemetryHistoryFromDisk();
 
     // Populate default emergency contact if box is empty
     if (_contactsBox.isEmpty) {
@@ -35,22 +45,42 @@ class HiveStorageService {
     }
   }
 
-  // --- Vitals Cache (Instant UI rendering) ---
-  static Future<void> cacheLatestTelemetry(TelemetryData data) async {
-    await _vitalsBox.put('latest_telemetry', jsonEncode(data.toJson()));
+  // --- Vitals Cache (Instant UI rendering & zero main-thread jank) ---
+  static void cacheLatestTelemetry(TelemetryData data) {
+    _latestTelemetryCache = data;
 
-    // Store in history array (limit to max 50 recent entries for fast query)
-    final historyList = getCachedTelemetryHistory();
-    historyList.insert(0, data);
-    if (historyList.length > 50) {
-      historyList.removeLast();
+    _historyCache ??= [];
+    _historyCache!.insert(0, data);
+    if (_historyCache!.length > 50) {
+      _historyCache!.removeLast();
     }
-    final encodedHistory =
-        historyList.map((e) => jsonEncode(e.toJson())).toList();
-    await _vitalsBox.put('telemetry_history', encodedHistory);
+
+    // Throttle heavy JSON disk serialization to at most once every 10 seconds
+    final now = DateTime.now();
+    if (now.difference(_lastVitalsDiskSave).inSeconds >= 10) {
+      _lastVitalsDiskSave = now;
+      _persistVitalsToDisk();
+    }
+  }
+
+  static void _persistVitalsToDisk() async {
+    try {
+      if (_latestTelemetryCache != null) {
+        await _vitalsBox.put('latest_telemetry', jsonEncode(_latestTelemetryCache!.toJson()));
+      }
+      if (_historyCache != null) {
+        final encodedHistory = _historyCache!.map((e) => jsonEncode(e.toJson())).toList();
+        await _vitalsBox.put('telemetry_history', encodedHistory);
+      }
+    } catch (_) {}
   }
 
   static TelemetryData getLatestTelemetry() {
+    if (_latestTelemetryCache != null) return _latestTelemetryCache!;
+    return _getLatestTelemetryFromDisk();
+  }
+
+  static TelemetryData _getLatestTelemetryFromDisk() {
     final raw = _vitalsBox.get('latest_telemetry');
     if (raw != null) {
       try {
@@ -61,6 +91,11 @@ class HiveStorageService {
   }
 
   static List<TelemetryData> getCachedTelemetryHistory() {
+    if (_historyCache != null) return List.unmodifiable(_historyCache!);
+    return _getCachedTelemetryHistoryFromDisk();
+  }
+
+  static List<TelemetryData> _getCachedTelemetryHistoryFromDisk() {
     final rawList = _vitalsBox.get('telemetry_history');
     if (rawList is List) {
       return rawList
@@ -79,6 +114,15 @@ class HiveStorageService {
 
   // --- Anomalies Log ---
   static Future<void> logAnomaly(AnomalyEvent anomaly) async {
+    // Throttle logging identical anomaly titles within 30 seconds to prevent disk spamming
+    final now = DateTime.now();
+    if (_lastAnomalyTitle == anomaly.title &&
+        now.difference(_lastAnomalyLogTime).inSeconds < 30) {
+      return;
+    }
+    _lastAnomalyTitle = anomaly.title;
+    _lastAnomalyLogTime = now;
+
     await _anomaliesBox.put(anomaly.id, jsonEncode(anomaly.toJson()));
   }
 
@@ -119,12 +163,20 @@ class HiveStorageService {
   }
 
   // --- App Preferences & Onboarding ---
-  static bool isOnboardingCompleted() {
-    return _settingsBox.get('onboarding_completed', defaultValue: false);
+  static Future<void> setOnboardingCompleted(bool complete) async {
+    await _settingsBox.put('onboarding_complete', complete);
   }
 
-  static Future<void> setOnboardingCompleted(bool value) async {
-    await _settingsBox.put('onboarding_completed', value);
+  static bool isOnboardingCompleted() {
+    return _settingsBox.get('onboarding_complete', defaultValue: false);
+  }
+
+  static Future<void> saveLocale(String localeCode) async {
+    await _settingsBox.put('app_locale', localeCode);
+  }
+
+  static String? getLocale() {
+    return _settingsBox.get('app_locale');
   }
 
   static bool isHardwareSimMode() {

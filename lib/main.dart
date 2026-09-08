@@ -9,6 +9,8 @@ import 'services/emergency_sms_service.dart';
 import 'services/permission_service.dart';
 import 'providers/onboarding_provider.dart';
 import 'providers/theme_provider.dart';
+import 'providers/locale_provider.dart';
+import 'providers/home_widget_provider.dart';
 import 'theme/app_theme.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/dashboard_screen.dart';
@@ -45,6 +47,7 @@ class HealthCompanionApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isOnboardingCompleted = ref.watch(onboardingProvider);
     final themeMode = ref.watch(themeProvider);
+    ref.watch(homeWidgetSyncProvider);
 
     return MaterialApp(
       title: 'Health Companion - SIH 26181',
@@ -60,11 +63,11 @@ class HealthCompanionApp extends ConsumerWidget {
   }
 }
 
-class MainShellScreen extends StatefulWidget {
+class MainShellScreen extends ConsumerStatefulWidget {
   const MainShellScreen({super.key});
 
   @override
-  State<MainShellScreen> createState() => _MainShellScreenState();
+  ConsumerState<MainShellScreen> createState() => _MainShellScreenState();
 }
 
 class _NavItemData {
@@ -81,7 +84,7 @@ class _NavItemData {
   });
 }
 
-class _MainShellScreenState extends State<MainShellScreen> {
+class _MainShellScreenState extends ConsumerState<MainShellScreen> {
   int _currentIndex = 0;
   late final PageController _pageController;
 
@@ -105,8 +108,6 @@ class _MainShellScreenState extends State<MainShellScreen> {
     RepaintBoundary(child: BleDeviceScreen()),
     RepaintBoundary(child: EmergencySosScreen()),
   ];
-
-  // Custom transitions removed for perfectly smooth native swipe performance
 
   @override
   Widget build(BuildContext context) {
@@ -133,20 +134,20 @@ class _MainShellScreenState extends State<MainShellScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final items = [
-      const _NavItemData(
-        label: "Dashboard",
+      _NavItemData(
+        label: ref.tr("dashboard"),
         icon: Icons.grid_view_outlined,
         activeIcon: Icons.grid_view_rounded,
         accentColor: AppTheme.electricCyan,
       ),
-      const _NavItemData(
-        label: "Hardware",
+      _NavItemData(
+        label: ref.tr("hardware"),
         icon: Icons.bluetooth_outlined,
         activeIcon: Icons.bluetooth_connected_rounded,
         accentColor: AppTheme.appleOxygenCyan,
       ),
-      const _NavItemData(
-        label: "Emergency",
+      _NavItemData(
+        label: ref.tr("emergency"),
         icon: Icons.emergency_outlined,
         activeIcon: Icons.emergency_rounded,
         accentColor: AppTheme.criticalRed,
@@ -161,7 +162,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
           child: ClipRRect(
               borderRadius: BorderRadius.circular(32),
               child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                 child: Container(
                   height: 64,
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),

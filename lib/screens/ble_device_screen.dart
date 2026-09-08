@@ -1,3 +1,4 @@
+import '../providers/locale_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -46,7 +47,7 @@ class _BleDeviceScreenState extends ConsumerState<BleDeviceScreen>
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(
-          "Connected Devices",
+          ref.tr("Connected Devices"),
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black87,
             fontWeight: FontWeight.w800,
@@ -115,19 +116,19 @@ class _BleDeviceScreenState extends ConsumerState<BleDeviceScreen>
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                children: const [
+                                children: [
                                   Text(
-                                    "Bluetooth is Turned Off",
-                                    style: TextStyle(
+                                    ref.tr("Bluetooth is Turned Off"),
+                                    style: const TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.orange,
                                     ),
                                   ),
-                                  SizedBox(height: 2),
+                                  const SizedBox(height: 2),
                                   Text(
-                                    "Turn ON Bluetooth in phone settings to pair with ESP32 wearable.",
-                                    style: TextStyle(fontSize: 11),
+                                    ref.tr("Turn ON Bluetooth in phone settings to pair with ESP32 wearable."),
+                                    style: const TextStyle(fontSize: 11),
                                   ),
                                 ],
                               ),
@@ -139,8 +140,8 @@ class _BleDeviceScreenState extends ConsumerState<BleDeviceScreen>
                     ],
 
                     // --- 2. ESP32 HARDWARE SENSOR ARRAY CHECKLIST ---
-                    const Text(
-                      "HARDWARE SENSOR ARRAY",
+                    Text(
+                      ref.tr(ref.tr("HARDWARE SENSOR ARRAY")),
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
@@ -155,9 +156,9 @@ class _BleDeviceScreenState extends ConsumerState<BleDeviceScreen>
                       child: Column(
                         children: [
                           _buildSensorRow(
-                            name: "MAX30102 HR & SpO2 Sensor",
+                            name: ref.tr("MAX30102 HR & SpO2 Sensor"),
                             bus: "I2C Address 0x57",
-                            status: bleState.isConnected ? "Active BLE" : "Simulator Ready",
+                            status: bleState.isConnected ? ref.tr("Active BLE") : ref.tr("Simulator Ready"),
                             color: AppTheme.healthyGreen,
                             textColor: textColor,
                             subtitleColor: subtitleColor,
@@ -168,9 +169,9 @@ class _BleDeviceScreenState extends ConsumerState<BleDeviceScreen>
                             child: Divider(height: 1, thickness: 0.5, color: Colors.white24),
                           ),
                           _buildSensorRow(
-                            name: "DHT22 Temp & Humidity Sensor",
+                            name: ref.tr("DHT22 Temp & Humidity Sensor"),
                             bus: "GPIO 14 Digital",
-                            status: bleState.isConnected ? "Active BLE" : "Simulator Ready",
+                            status: bleState.isConnected ? ref.tr("Active BLE") : ref.tr("Simulator Ready"),
                             color: AppTheme.healthyGreen,
                             textColor: textColor,
                             subtitleColor: subtitleColor,
@@ -181,9 +182,9 @@ class _BleDeviceScreenState extends ConsumerState<BleDeviceScreen>
                             child: Divider(height: 1, thickness: 0.5, color: Colors.white24),
                           ),
                           _buildSensorRow(
-                            name: "MQ135 Air Quality Sensor",
+                            name: ref.tr("MQ135 Air Quality Sensor"),
                             bus: "ADC Pin 34",
-                            status: bleState.isConnected ? "Active BLE" : "Simulator Ready",
+                            status: bleState.isConnected ? ref.tr("Active BLE") : ref.tr("Simulator Ready"),
                             color: AppTheme.healthyGreen,
                             textColor: textColor,
                             subtitleColor: subtitleColor,
@@ -194,9 +195,9 @@ class _BleDeviceScreenState extends ConsumerState<BleDeviceScreen>
                             child: Divider(height: 1, thickness: 0.5, color: Colors.white24),
                           ),
                           _buildSensorRow(
-                            name: "MPU6050 Accelerometer / Fall",
+                            name: ref.tr("MPU6050 Accelerometer / Fall"),
                             bus: "I2C Address 0x68",
-                            status: bleState.isConnected ? "Active BLE" : "Simulator Ready",
+                            status: bleState.isConnected ? ref.tr("Active BLE") : ref.tr("Simulator Ready"),
                             color: AppTheme.healthyGreen,
                             textColor: textColor,
                             subtitleColor: subtitleColor,
@@ -207,7 +208,7 @@ class _BleDeviceScreenState extends ConsumerState<BleDeviceScreen>
                             child: Divider(height: 1, thickness: 0.5, color: Colors.white24),
                           ),
                           _buildSensorRow(
-                            name: "GSR Skin Conductance (Stress)",
+                            name: ref.tr("GSR Skin Conductance (Stress)"),
                             bus: "ADC Pin 35 (Expansion)",
                             status: "Inactive",
                             color: Colors.grey,
@@ -220,7 +221,7 @@ class _BleDeviceScreenState extends ConsumerState<BleDeviceScreen>
                             child: Divider(height: 1, thickness: 0.5, color: Colors.white24),
                           ),
                           _buildSensorRow(
-                            name: "NEO-6M GPS Module",
+                            name: ref.tr("NEO-6M GPS Module"),
                             bus: "UART RX/TX (Not connected)",
                             status: "Inactive",
                             color: Colors.grey,
@@ -493,8 +494,8 @@ class _BleDeviceScreenState extends ConsumerState<BleDeviceScreen>
         onPressed: null,
         child: Row(
           mainAxisSize: MainAxisSize.min,
-          children: const [
-            SizedBox(
+          children: [
+            const SizedBox(
               width: 10,
               height: 10,
               child: CircularProgressIndicator(
@@ -505,7 +506,7 @@ class _BleDeviceScreenState extends ConsumerState<BleDeviceScreen>
             SizedBox(width: 6),
             FittedBox(
               fit: BoxFit.scaleDown,
-              child: Text("CONNECTING...",
+              child: Text(ref.tr("connecting_caps"),
                   style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
             ),
           ],
@@ -526,12 +527,12 @@ class _BleDeviceScreenState extends ConsumerState<BleDeviceScreen>
         },
         child: Row(
           mainAxisSize: MainAxisSize.min,
-          children: const [
-            Icon(Icons.check, size: 14),
-            SizedBox(width: 4),
+          children: [
+            const Icon(Icons.check, size: 14),
+            const SizedBox(width: 4),
             FittedBox(
               fit: BoxFit.scaleDown,
-              child: Text("CONNECTED",
+              child: Text(ref.tr("connected_caps"),
                   style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
             ),
           ],
@@ -549,9 +550,9 @@ class _BleDeviceScreenState extends ConsumerState<BleDeviceScreen>
       onPressed: () {
         ref.read(bleProvider.notifier).connect(device);
       },
-      child: const FittedBox(
+      child: FittedBox(
         fit: BoxFit.scaleDown,
-        child: Text("CONNECT",
+        child: Text(ref.tr("connect_caps"),
             style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black)),
       ),
     );

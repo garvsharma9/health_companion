@@ -1,9 +1,12 @@
+import '../providers/locale_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:health_companion/widgets/glass_card.dart';
 import '../providers/health_trends_provider.dart';
 
-class HealthChartCard extends StatelessWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class HealthChartCard extends ConsumerWidget {
   final String title;
   final String currentValue;
   final String unit;
@@ -20,7 +23,7 @@ class HealthChartCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final titleColor = isDark ? Colors.white : const Color(0xFF1C1C1E);
 
@@ -56,7 +59,7 @@ class HealthChartCard extends StatelessWidget {
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
-                          title,
+                          ref.tr(title),
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color: titleColor,

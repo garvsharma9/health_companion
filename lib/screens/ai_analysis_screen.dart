@@ -1,3 +1,4 @@
+import '../providers/locale_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:health_companion/theme/app_theme.dart';
@@ -39,7 +40,7 @@ class _AIAnalysisScreenState extends ConsumerState<AIAnalysisScreen> {
       backgroundColor: isDark ? AppTheme.bgDark : AppTheme.bgLight,
       appBar: AppBar(
         title: Text(
-          'AI Health Analysis Report',
+          ref.tr("ai_report_title"),
           style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
@@ -254,9 +255,9 @@ class _AIAnalysisScreenState extends ConsumerState<AIAnalysisScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "ON-DEVICE EDGE AI EXECUTION",
-          style: TextStyle(
+        Text(
+          ref.tr("ON-DEVICE EDGE AI EXECUTION"),
+          style: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w700,
             color: Color(0xFF8E8E93),
@@ -311,13 +312,13 @@ class _AIAnalysisScreenState extends ConsumerState<AIAnalysisScreen> {
                         ),
                         Row(
                           mainAxisSize: MainAxisSize.min,
-                          children: const [
-                            Icon(Icons.lock,
+                          children: [
+                            const Icon(Icons.lock,
                                 size: 12, color: AppTheme.healthyGreen),
-                            SizedBox(width: 3),
+                            const SizedBox(width: 3),
                             Text(
-                              "100% Offline Privacy",
-                              style: TextStyle(
+                              ref.tr("100% Offline Privacy"),
+                              style: const TextStyle(
                                   fontSize: 11, color: AppTheme.healthyGreen, fontWeight: FontWeight.w600),
                             ),
                           ],
@@ -361,7 +362,7 @@ class _AIAnalysisScreenState extends ConsumerState<AIAnalysisScreen> {
           ),
           const SizedBox(height: 14),
           Text(
-            "Over the past 24-hour evaluation cycle, your vital signals demonstrated high homeostasis and healthy autonomic adaptability. Resting heart rate averaged 68 BPM with normal circadian dip during REM sleep cycles.",
+            ref.tr("Over the past 24-hour evaluation cycle, your vital signals demonstrated high homeostasis and healthy autonomic adaptability. Resting heart rate averaged 68 BPM with normal circadian dip during REM sleep cycles."),
             style: TextStyle(
               color: bodyColor,
               fontSize: 14,
@@ -369,9 +370,9 @@ class _AIAnalysisScreenState extends ConsumerState<AIAnalysisScreen> {
             ),
           ),
           const SizedBox(height: 14),
-          _buildBulletPoint(context, "Heart Rate Stability", "Normal range (62 - 108 BPM). Peak recorded during 3:15 PM activity with rapid 8-minute recovery."),
-          _buildBulletPoint(context, "Blood Oxygen (SpO2)", "Maintained high average of 98.4% without nocturnal hypoxia dips."),
-          _buildBulletPoint(context, "Thermoregulation", "Body temp steady at 36.6°C. Minor 0.3°C drop observed at 3:00 AM due to room temperature dip."),
+          _buildBulletPoint(context, ref.tr("Heart Rate Stability"), "Normal range (62 - 108 BPM). Peak recorded during 3:15 PM activity with rapid 8-minute recovery."),
+          _buildBulletPoint(context, ref.tr("Blood Oxygen (SpO2)"), "Maintained high average of 98.4% without nocturnal hypoxia dips."),
+          _buildBulletPoint(context, ref.tr("Thermoregulation"), "Body temp steady at 36.6°C. Minor 0.3°C drop observed at 3:00 AM due to room temperature dip."),
         ],
       ),
     );
@@ -685,13 +686,13 @@ class _AIAnalysisScreenState extends ConsumerState<AIAnalysisScreen> {
       children: [
         Row(
           children: [
-            const Expanded(
+            Expanded(
               child: FittedBox(
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "LOGGED HEALTH ANOMALIES",
-                  style: TextStyle(
+                  ref.tr("LOGGED HEALTH ANOMALIES"),
+                  style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFF8E8E93),
@@ -715,7 +716,7 @@ class _AIAnalysisScreenState extends ConsumerState<AIAnalysisScreen> {
             padding: const EdgeInsets.all(24),
             child: Center(
               child: Text(
-                "No health anomalies recorded yet.\nAll vitals are safe and within normal baseline.",
+                ref.tr("No health anomalies recorded yet.\nAll vitals are safe and within normal baseline."),
                 textAlign: TextAlign.center,
                 style: TextStyle(color: subtitleColor, fontSize: 12),
               ),

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 import '../models/telemetry_data.dart';
 import 'hive_storage_service.dart';
+import 'hive_storage_service.dart';
 
 class BleHardwareService {
   static final FlutterReactiveBle _ble = FlutterReactiveBle();
@@ -86,6 +87,8 @@ class BleHardwareService {
       }
     });
   }
+
+  // Widget update removed, handled by home_widget_provider.dart
 
   // --- HARDWARE SIMULATION ENGINE ---
   static void startSimulator() {

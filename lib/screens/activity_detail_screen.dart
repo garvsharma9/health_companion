@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import '../providers/locale_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../theme/app_theme.dart';
@@ -94,7 +95,7 @@ class _ActivityDetailScreenState extends ConsumerState<ActivityDetailScreen> {
       backgroundColor: isDark ? AppTheme.bgDark : AppTheme.bgLight,
       appBar: AppBar(
         title: Text(
-          "Activity & Steps",
+          ref.tr("Activity & Steps"),
           style: TextStyle(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
@@ -110,10 +111,10 @@ class _ActivityDetailScreenState extends ConsumerState<ActivityDetailScreen> {
               glowColor: Colors.lightGreen,
               child: Column(
                 children: [
-                  Text("Current Status", style: TextStyle(color: isDark ? Colors.white70 : Colors.black54)),
+                  Text(ref.tr("current_status"), style: TextStyle(color: isDark ? Colors.white70 : Colors.black54)),
                   const SizedBox(height: 8),
                   Text(
-                    activityState.activityLevel,
+                    ref.tr(activityState.activityLevel),
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -124,8 +125,8 @@ class _ActivityDetailScreenState extends ConsumerState<ActivityDetailScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _buildMetricBox("Steps", "${activityState.steps}", isDark),
-                      _buildMetricBox("Active kCal", "${activityState.activeCalories}", isDark),
+                      _buildMetricBox(ref.tr("steps_normal"), "${activityState.steps}", isDark),
+                      _buildMetricBox(ref.tr("Active kCal"), "${activityState.activeCalories}", isDark),
                     ],
                   ),
                 ],
@@ -136,7 +137,7 @@ class _ActivityDetailScreenState extends ConsumerState<ActivityDetailScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  _is24h ? "24-HOUR ACTIVITY INTENSITY" : "7-DAY ACTIVITY TREND",
+                  ref.tr(_is24h ? "24-HOUR ACTIVITY INTENSITY" : "7-DAY ACTIVITY TREND"),
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
@@ -166,7 +167,7 @@ class _ActivityDetailScreenState extends ConsumerState<ActivityDetailScreen> {
                           interval: _is24h ? 6 : 1,
                           getTitlesWidget: (value, meta) {
                             if (_is24h) {
-                              return Text("${value.toInt()}h", style: TextStyle(fontSize: 10, color: isDark ? Colors.white54 : Colors.black54));
+                              return Text(ref.tr("hours_short").replaceAll("{h}", value.toInt().toString()), style: TextStyle(fontSize: 10, color: isDark ? Colors.white54 : Colors.black54));
                             } else {
                               final days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
                               int index = value.toInt() % 7;
@@ -205,7 +206,7 @@ class _ActivityDetailScreenState extends ConsumerState<ActivityDetailScreen> {
     return Column(
       children: [
         Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
-        Text(label, style: TextStyle(fontSize: 12, color: isDark ? Colors.white70 : Colors.black54)),
+        Text(ref.tr(label), style: TextStyle(fontSize: 12, color: isDark ? Colors.white70 : Colors.black54)),
       ],
     );
   }

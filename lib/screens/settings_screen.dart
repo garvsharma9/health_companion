@@ -6,6 +6,7 @@ import '../providers/onboarding_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/glass_card.dart';
 import 'sih_compliance_screen.dart';
+import '../providers/locale_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -23,7 +24,7 @@ class SettingsScreen extends ConsumerWidget {
       backgroundColor: isDark ? AppTheme.bgDark : AppTheme.bgLight,
       appBar: AppBar(
         title: Text(
-          "App Settings & Preferences",
+          ref.tr("app_settings"),
           style: TextStyle(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
@@ -65,9 +66,9 @@ class SettingsScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // --- 1. APPEARANCE & THEME SWITCHER ---
-            const Text(
-              "APPEARANCE",
-              style: TextStyle(
+            Text(
+              ref.tr("appearance"),
+              style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF8E8E93),
@@ -86,16 +87,54 @@ class SettingsScreen extends ConsumerWidget {
                     color: isDark ? Colors.amberAccent : AppTheme.electricCyan,
                   ),
                   title: Text(
-                    "Dark Mode Theme",
+                    ref.tr("dark_mode"),
                     style: TextStyle(fontWeight: FontWeight.bold, color: textColor),
                   ),
                   subtitle: Text(
-                    isDark ? "Apple OLED Black Palette" : "Clean White Porcelain Theme (Default)",
+                    isDark ? ref.tr("apple_oled") : ref.tr("clean_white"),
                     style: TextStyle(fontSize: 12, color: subtitleColor),
                   ),
                   value: isDark,
                   onChanged: (val) {
                     ref.read(themeProvider.notifier).toggleTheme(val);
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // --- 1.5 LANGUAGE SWITCHER ---
+            Text(
+              ref.tr("language"),
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF8E8E93),
+                letterSpacing: 0.8,
+              ),
+            ),
+            const SizedBox(height: 10),
+            GlassCard(
+              padding: EdgeInsets.zero,
+              glowColor: isDark ? Colors.blueAccent : AppTheme.primaryBlueLight,
+              child: Material(
+                color: Colors.transparent,
+                child: SwitchListTile(
+                  secondary: Icon(
+                    Icons.language,
+                    color: isDark ? Colors.blueAccent : AppTheme.primaryBlueLight,
+                  ),
+                  title: Text(
+                    "हिन्दी (Hindi)",
+                    style: TextStyle(fontWeight: FontWeight.bold, color: textColor),
+                  ),
+                  subtitle: Text(
+                    "Switch app language to Hindi",
+                    style: TextStyle(fontSize: 12, color: subtitleColor),
+                  ),
+                  value: ref.watch(localeProvider) == 'hi',
+                  onChanged: (val) {
+                    ref.read(localeProvider.notifier).setLocale(val ? 'hi' : 'en');
                   },
                 ),
               ),
@@ -153,7 +192,7 @@ class SettingsScreen extends ConsumerWidget {
                       _buildSimChip(
                         context,
                         ref,
-                        label: "Heat Stroke Risk",
+                        label: ref.tr("Heat Stroke Risk"),
                         icon: Icons.wb_sunny,
                         color: Colors.orange,
                         type: "heat",
@@ -161,7 +200,7 @@ class SettingsScreen extends ConsumerWidget {
                       _buildSimChip(
                         context,
                         ref,
-                        label: "SpO2 Drop Hazard",
+                        label: ref.tr("SpO2 Drop Hazard"),
                         icon: Icons.masks,
                         color: Colors.purple,
                         type: "spo2",
@@ -169,7 +208,7 @@ class SettingsScreen extends ConsumerWidget {
                       _buildSimChip(
                         context,
                         ref,
-                        label: "Fall Detection",
+                        label: ref.tr("Fall Detection"),
                         icon: Icons.accessibility_new,
                         color: Colors.red,
                         type: "fall",
@@ -177,7 +216,7 @@ class SettingsScreen extends ConsumerWidget {
                       _buildSimChip(
                         context,
                         ref,
-                        label: "Walking",
+                        label: ref.tr("Walking"),
                         icon: Icons.directions_walk,
                         color: Colors.lightGreen,
                         type: "walking",
@@ -185,7 +224,7 @@ class SettingsScreen extends ConsumerWidget {
                       _buildSimChip(
                         context,
                         ref,
-                        label: "Deep Sleep",
+                        label: ref.tr("Deep Sleep"),
                         icon: Icons.bedtime,
                         color: Colors.indigoAccent,
                         type: "sleep",
@@ -193,7 +232,7 @@ class SettingsScreen extends ConsumerWidget {
                       _buildSimChip(
                         context,
                         ref,
-                        label: "Reset Healthy",
+                        label: ref.tr("Reset Healthy"),
                         icon: Icons.refresh,
                         color: AppTheme.healthyGreen,
                         type: "normal",
@@ -249,9 +288,9 @@ class SettingsScreen extends ConsumerWidget {
                   children: [
                     ListTile(
                       leading: const Icon(Icons.verified_outlined, color: AppTheme.healthyGreen),
-                      title: Text("SIH Problem 26181 Compliance Matrix",
+                      title: Text(ref.tr("sih_info"),
                           style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
-                      subtitle: Text("View hackathon hardware & software evaluation matrix",
+                      subtitle: Text(ref.tr("sih_info_desc"),
                           style: TextStyle(fontSize: 12, color: subtitleColor)),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () {
@@ -264,9 +303,9 @@ class SettingsScreen extends ConsumerWidget {
                     const Divider(height: 1),
                     ListTile(
                       leading: const Icon(Icons.help_outline, color: AppTheme.electricCyan),
-                      title: Text("Re-open Feature Onboarding Guide",
+                      title: Text(ref.tr("reopen_onboarding"),
                           style: TextStyle(fontWeight: FontWeight.bold, color: textColor)),
-                      subtitle: Text("View the Opera-style walkthrough slides again",
+                      subtitle: Text(ref.tr("reopen_onboarding_desc"),
                           style: TextStyle(fontSize: 12, color: subtitleColor)),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () {
@@ -338,7 +377,7 @@ class SettingsScreen extends ConsumerWidget {
         ref.read(bleProvider.notifier).injectAnomaly(type);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Simulated $label Payload Injected!"),
+            content: Text(ref.tr("simulated_payload").replaceAll("{label}", label)),
             duration: const Duration(seconds: 1),
             backgroundColor: color.withValues(alpha: 0.9),
           ),

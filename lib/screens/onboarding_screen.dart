@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/onboarding_provider.dart';
+import '../providers/locale_provider.dart';
 import '../theme/app_theme.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
@@ -16,30 +17,26 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   final List<Map<String, String>> _slides = [
     {
-      'title': 'Continuous Offline Health Tracking',
-      'subtitle':
-          'Monitors Heart Rate (BPM), SpO2, Body Temp, and Movement 24/7 without needing internet or cloud connectivity.',
+      'title': 'onboarding_title_1',
+      'subtitle': 'onboarding_subtitle_1',
       'icon': 'favorite',
       'accentColor': '0xFF00E676',
     },
     {
-      'title': 'On-Device AI Early Warning System',
-      'subtitle':
-          'Detects heat stroke hazards, pollution spikes, and respiratory risks before medical emergencies occur.',
+      'title': 'onboarding_title_2',
+      'subtitle': 'onboarding_subtitle_2',
       'icon': 'warning_amber',
       'accentColor': '0xFFFFC107',
     },
     {
-      'title': 'Hardware Simulation & ESP32 BLE',
-      'subtitle':
-          'Connect to physical ESP32 wristband via Bluetooth, or test all features instantly using built-in Hardware Simulator Mode.',
+      'title': 'onboarding_title_3',
+      'subtitle': 'onboarding_subtitle_3',
       'icon': 'bluetooth',
       'accentColor': '0xFF00E5FF',
     },
     {
-      'title': 'Emergency SOS & Caregiver Alerts',
-      'subtitle':
-          'Automatic fall detection initiates direct offline SMS alerts and GPS location to your configured caregiver contacts.',
+      'title': 'onboarding_title_4',
+      'subtitle': 'onboarding_subtitle_4',
       'icon': 'sos',
       'accentColor': '0xFFFF5252',
     },
@@ -52,24 +49,51 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Top Skip Button
-            Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: TextButton(
-                  onPressed: () {
-                    ref.read(onboardingProvider.notifier).completeOnboarding();
-                  },
-                  child: const Text(
-                    'SKIP',
-                    style: TextStyle(
-                      color: Colors.white54,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+            // Top Bar with Language Switcher and Skip Button
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Language Switcher
+                  Row(
+                    children: [
+                      const Icon(Icons.language, color: Colors.white70, size: 20),
+                      const SizedBox(width: 8),
+                      DropdownButton<String>(
+                        value: ref.watch(localeProvider),
+                        dropdownColor: AppTheme.cardDark,
+                        icon: const Icon(Icons.arrow_drop_down, color: Colors.white70),
+                        underline: const SizedBox(),
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        items: const [
+                          DropdownMenuItem(value: 'en', child: Text('English')),
+                          DropdownMenuItem(value: 'hi', child: Text('हिन्दी')),
+                        ],
+                        onChanged: (String? newValue) {
+                          if (newValue != null) {
+                            ref.read(localeProvider.notifier).setLocale(newValue);
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                  
+                  // Skip Button
+                  TextButton(
+                    onPressed: () {
+                      ref.read(onboardingProvider.notifier).completeOnboarding();
+                    },
+                    child: Text(
+                      ref.tr("skip"),
+                      style: const TextStyle(
+                        color: Colors.white54,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
             ),
             Expanded(
@@ -107,7 +131,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         FittedBox(
                           fit: BoxFit.scaleDown,
                           child: Text(
-                            slide['title']!,
+                            ref.tr(slide['title']!),
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: 22,
@@ -118,7 +142,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          slide['subtitle']!,
+                          ref.tr(slide['subtitle']!),
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             fontSize: 15,
@@ -182,8 +206,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   },
                   child: Text(
                     _currentPage == _slides.length - 1
-                        ? 'GET STARTED'
-                        : 'NEXT',
+                        ? ref.tr("get_started")
+                        : ref.tr("next"),
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,

@@ -11,6 +11,7 @@ import '../providers/health_trends_provider.dart';
 import '../widgets/health_chart_card.dart';
 import 'ai_analysis_screen.dart';
 import '../providers/activity_sleep_provider.dart';
+import '../providers/locale_provider.dart';
 import 'activity_detail_screen.dart';
 import 'sleep_detail_screen.dart';
 
@@ -82,10 +83,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
                       const SizedBox(width: 4),
                       Text(
                         bleState.isConnected
-                            ? "ESP32 WEARABLE ACTIVE"
+                            ? ref.tr("esp32_active")
                             : (bleState.isScanning
-                                ? "SCANNING FOR WEARABLE"
-                                : "WEARABLE DISCONNECTED"),
+                                ? ref.tr("scanning_wearable")
+                                : ref.tr("wearable_disconnected")),
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
@@ -201,7 +202,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
                                 ),
                               ),
                               Text(
-                                "RISK",
+                                ref.tr("risk"),
                                 style: TextStyle(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w600,
@@ -261,12 +262,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
                                 children: [
                                   Icon(Icons.directions_walk, size: 16, color: Colors.lightGreen),
                                   const SizedBox(width: 4),
-                                  Text("ACTIVITY", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: isDark ? Colors.white70 : Colors.black54)),
+                                  Text(ref.tr("activity"), style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: isDark ? Colors.white70 : Colors.black54)),
                                 ],
                               ),
                               const SizedBox(height: 8),
-                              Text(activitySleepState.activityLevel, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
-                              Text("${activitySleepState.steps} steps", style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : Colors.black54)),
+                              Text(ref.tr(activitySleepState.activityLevel), style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
+                              Text(ref.tr("steps_count").replaceAll("{count}", activitySleepState.steps.toString()), style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : Colors.black54)),
                             ],
                           ),
                         ),
@@ -286,12 +287,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
                                 children: [
                                   Icon(Icons.bedtime, size: 16, color: Colors.indigoAccent),
                                   const SizedBox(width: 4),
-                                  Text("SLEEP", style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: isDark ? Colors.white70 : Colors.black54)),
+                                  Text(ref.tr("sleep"), style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: isDark ? Colors.white70 : Colors.black54)),
                                 ],
                               ),
                               const SizedBox(height: 8),
-                              Text(activitySleepState.sleepState, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
-                              Text("${activitySleepState.sleepDurationMinutes ~/ 60}h ${activitySleepState.sleepDurationMinutes % 60}m", style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : Colors.black54)),
+                              Text(ref.tr(activitySleepState.sleepState), style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
+                              Text(ref.tr("sleep_duration").replaceAll("{h}", (activitySleepState.sleepDurationMinutes ~/ 60).toString()).replaceAll("{m}", (activitySleepState.sleepDurationMinutes % 60).toString()), style: TextStyle(fontSize: 12, color: isDark ? Colors.white54 : Colors.black54)),
                             ],
                           ),
                         ),
@@ -373,10 +374,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
                     Expanded(
                       child: _buildVitalCard(
                         context,
-                        title: "Heart Rate",
+                        title: ref.tr("Heart Rate"),
                         value: telemetry.heartRate.toStringAsFixed(0),
                         unit: "BPM",
-                        baseline: "60–100 Normal",
+                        baseline: ref.tr("60–100 Normal"),
                         icon: Icons.favorite,
                         iconColor: AppTheme.appleHeartRed,
                       ),
@@ -385,10 +386,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
                     Expanded(
                       child: _buildVitalCard(
                         context,
-                        title: "SpO2 Oxygen",
+                        title: ref.tr("SpO2 Oxygen"),
                         value: telemetry.spO2.toStringAsFixed(1),
                         unit: "%",
-                        baseline: "95–100% Safe",
+                        baseline: ref.tr("95–100% Safe"),
                         icon: Icons.water_drop,
                         iconColor: AppTheme.appleOxygenCyan,
                       ),
@@ -397,10 +398,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
                     Expanded(
                       child: _buildVitalCard(
                         context,
-                        title: "Body Temp",
+                        title: ref.tr("Body Temp"),
                         value: telemetry.bodyTemp.toStringAsFixed(1),
                         unit: "°C",
-                        baseline: "36.5–37.5°C",
+                        baseline: ref.tr("36.5–37.5°C"),
                         icon: Icons.thermostat,
                         iconColor: AppTheme.appleTempAmber,
                       ),
@@ -426,7 +427,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
                     children: [
                       _buildEnvItem(
                         context,
-                        label: "Ambient Temp",
+                        label: ref.tr("Ambient Temp"),
                         value: "${telemetry.ambientTemp.toStringAsFixed(1)}°C",
                         icon: Icons.wb_sunny_outlined,
                         color: Colors.amber,
@@ -434,7 +435,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
                       Container(width: 1, height: 35, color: isDark ? Colors.white12 : Colors.black12),
                       _buildEnvItem(
                         context,
-                        label: "Humidity",
+                        label: ref.tr("Humidity"),
                         value: "${telemetry.humidity.toStringAsFixed(0)}%",
                         icon: Icons.cloud_queue,
                         color: AppTheme.electricCyan,
@@ -442,7 +443,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
                       Container(width: 1, height: 35, color: isDark ? Colors.white12 : Colors.black12),
                       _buildEnvItem(
                         context,
-                        label: "Air Quality",
+                        label: ref.tr("Air Quality"),
                         value: "AQI ${telemetry.aqi.toStringAsFixed(0)}",
                         icon: Icons.air,
                         color: _getAqiColor(telemetry.aqi),
@@ -585,7 +586,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
         ),
         const SizedBox(height: 20),
         HealthChartCard(
-          title: "Heart Rate History",
+          title: ref.tr("Heart Rate History"),
           currentValue: "${(trends.heartRateData.fold(0.0, (s, p) => s + p.y) / (trends.heartRateData.isEmpty ? 1 : trends.heartRateData.length)).toStringAsFixed(0)} Avg",
           unit: "BPM",
           accentColor: AppTheme.appleHeartRed,
@@ -601,7 +602,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
           ),
         ),
         HealthChartCard(
-          title: "Blood Oxygen SpO2 History",
+          title: ref.tr("Blood Oxygen SpO2 History"),
           currentValue: "${(trends.spO2Data.fold(0.0, (s, p) => s + p.y) / (trends.spO2Data.isEmpty ? 1 : trends.spO2Data.length)).toStringAsFixed(1)} Avg",
           unit: "%",
           accentColor: AppTheme.appleOxygenCyan,
@@ -617,7 +618,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen>
           ),
         ),
         HealthChartCard(
-          title: "Body Temperature History",
+          title: ref.tr("Body Temperature History"),
           currentValue: "${(trends.temperatureData.fold(0.0, (s, p) => s + p.y) / (trends.temperatureData.isEmpty ? 1 : trends.temperatureData.length)).toStringAsFixed(1)} Avg",
           unit: "°C",
           accentColor: AppTheme.appleTempAmber,

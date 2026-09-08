@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/telemetry_data.dart';
 import 'telemetry_provider.dart';
+import 'package:home_widget/home_widget.dart';
 
 class ActivitySleepState {
   final String activityLevel;
@@ -25,7 +26,7 @@ class ActivitySleepState {
       activityLevel: 'Resting',
       steps: 4302, // Mocked base steps for demo
       activeCalories: 340,
-      sleepState: 'Awake',
+      sleepState: "awake",
       sleepDurationMinutes: 432, // 7 hours 12 mins
       sleepScore: 88,
     );
@@ -86,7 +87,7 @@ class ActivitySleepNotifier extends StateNotifier<ActivitySleepState> {
     }
 
     // --- Sleep Quality Logic (Motion + HR) ---
-    String newSleepState = 'Awake';
+    String newSleepState = "awake";
     int newSleepScore = state.sleepScore;
     
     // Near 1g (9.81 m/s^2) means very little motion. Low HR means sleep.
@@ -96,7 +97,7 @@ class ActivitySleepNotifier extends StateNotifier<ActivitySleepState> {
     } else if (magnitude > 9.5 && magnitude < 10.1 && telemetry.heartRate < 72) {
       newSleepState = 'Light Sleep';
     } else {
-      newSleepState = 'Awake';
+      newSleepState = "awake";
     }
 
     state = state.copyWith(

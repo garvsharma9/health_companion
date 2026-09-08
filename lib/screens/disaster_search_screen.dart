@@ -1,17 +1,19 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/locale_provider.dart';
 import '../theme/app_theme.dart';
 
-class DisasterSearchScreen extends StatefulWidget {
+class DisasterSearchScreen extends ConsumerStatefulWidget {
   final String disasterType;
 
   const DisasterSearchScreen({super.key, required this.disasterType});
 
   @override
-  State<DisasterSearchScreen> createState() => _DisasterSearchScreenState();
+  ConsumerState<DisasterSearchScreen> createState() => _DisasterSearchScreenState();
 }
 
-class _DisasterSearchScreenState extends State<DisasterSearchScreen> with SingleTickerProviderStateMixin {
+class _DisasterSearchScreenState extends ConsumerState<DisasterSearchScreen> with SingleTickerProviderStateMixin {
   bool _helpFound = false;
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
@@ -171,7 +173,7 @@ class _DisasterSearchScreenState extends State<DisasterSearchScreen> with Single
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  child: const Text("Return to Dashboard", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  child: Text(ref.tr("return_dashboard"), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 ),
               ],
             ],

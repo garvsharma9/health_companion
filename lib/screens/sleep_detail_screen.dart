@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import '../providers/locale_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../theme/app_theme.dart';
@@ -78,7 +79,7 @@ class _SleepDetailScreenState extends ConsumerState<SleepDetailScreen> {
       backgroundColor: isDark ? AppTheme.bgDark : AppTheme.bgLight,
       appBar: AppBar(
         title: Text(
-          "Sleep Quality",
+          ref.tr("Sleep Quality"),
           style: TextStyle(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
@@ -94,10 +95,10 @@ class _SleepDetailScreenState extends ConsumerState<SleepDetailScreen> {
               glowColor: Colors.indigoAccent,
               child: Column(
                 children: [
-                  Text("Current Status", style: TextStyle(color: isDark ? Colors.white70 : Colors.black54)),
+                  Text(ref.tr("current_status"), style: TextStyle(color: isDark ? Colors.white70 : Colors.black54)),
                   const SizedBox(height: 8),
                   Text(
-                    sleepState.sleepState,
+                    ref.tr(sleepState.sleepState),
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -108,8 +109,8 @@ class _SleepDetailScreenState extends ConsumerState<SleepDetailScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _buildMetricBox("Duration", "${sleepState.sleepDurationMinutes ~/ 60}h ${sleepState.sleepDurationMinutes % 60}m", isDark),
-                      _buildMetricBox("Quality Score", "${sleepState.sleepScore}", isDark),
+                      _buildMetricBox(ref.tr("Duration"), "${sleepState.sleepDurationMinutes ~/ 60}h ${sleepState.sleepDurationMinutes % 60}m", isDark),
+                      _buildMetricBox(ref.tr("Quality Score"), "${sleepState.sleepScore}", isDark),
                     ],
                   ),
                 ],
@@ -120,7 +121,7 @@ class _SleepDetailScreenState extends ConsumerState<SleepDetailScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  _is24h ? "LAST NIGHT'S SLEEP STAGES" : "7-DAY SLEEP TREND",
+                  ref.tr(_is24h ? "LAST NIGHT'S SLEEP STAGES" : "7-DAY SLEEP TREND"),
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
@@ -151,7 +152,7 @@ class _SleepDetailScreenState extends ConsumerState<SleepDetailScreen> {
                           interval: _is24h ? 2 : 1,
                           getTitlesWidget: (value, meta) {
                             if (_is24h) {
-                              return Text("${value.toInt()}h", style: TextStyle(fontSize: 10, color: isDark ? Colors.white54 : Colors.black54));
+                              return Text(ref.tr("hours_short").replaceAll("{h}", value.toInt().toString()), style: TextStyle(fontSize: 10, color: isDark ? Colors.white54 : Colors.black54));
                             } else {
                               final days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
                               int index = value.toInt() % 7;
@@ -169,11 +170,11 @@ class _SleepDetailScreenState extends ConsumerState<SleepDetailScreen> {
                             if (!_is24h) return const Text(""); // Hide left titles in 7D mode for cleaner look
                             switch (value.toInt()) {
                               case 1:
-                                return Text("Deep", style: TextStyle(fontSize: 10, color: isDark ? Colors.white54 : Colors.black54));
+                                return Text(ref.tr("deep"), style: TextStyle(fontSize: 10, color: isDark ? Colors.white54 : Colors.black54));
                               case 2:
-                                return Text("Light", style: TextStyle(fontSize: 10, color: isDark ? Colors.white54 : Colors.black54));
+                                return Text(ref.tr("light"), style: TextStyle(fontSize: 10, color: isDark ? Colors.white54 : Colors.black54));
                               case 3:
-                                return Text("Awake", style: TextStyle(fontSize: 10, color: isDark ? Colors.white54 : Colors.black54));
+                                return Text(ref.tr("awake"), style: TextStyle(fontSize: 10, color: isDark ? Colors.white54 : Colors.black54));
                               default:
                                 return const Text("");
                             }
@@ -210,7 +211,7 @@ class _SleepDetailScreenState extends ConsumerState<SleepDetailScreen> {
     return Column(
       children: [
         Text(value, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
-        Text(label, style: TextStyle(fontSize: 12, color: isDark ? Colors.white70 : Colors.black54)),
+        Text(ref.tr(label), style: TextStyle(fontSize: 12, color: isDark ? Colors.white70 : Colors.black54)),
       ],
     );
   }

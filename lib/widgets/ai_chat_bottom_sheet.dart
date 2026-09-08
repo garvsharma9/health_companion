@@ -1,3 +1,4 @@
+import '../providers/locale_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:health_companion/theme/app_theme.dart';
@@ -111,7 +112,7 @@ class _AIChatBottomSheetState extends ConsumerState<AIChatBottomSheet> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'AI Health Assistant',
+                      ref.tr('AI Health Assistant'),
                       style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.bold,
@@ -130,7 +131,7 @@ class _AIChatBottomSheetState extends ConsumerState<AIChatBottomSheet> {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          'Online • Continuous Vitals Monitoring',
+                          ref.tr('Online • Continuous Vitals Monitoring'),
                           style: TextStyle(
                             fontSize: 11,
                             color: isDark ? Colors.white60 : Colors.black54,
