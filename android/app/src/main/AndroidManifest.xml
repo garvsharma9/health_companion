@@ -39,7 +39,7 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-        <receiver android:name=".HeartRateWidgetProvider" android:exported="true">
+        <receiver android:name=".HeartRateWidgetProvider" android:exported="true" android:label="Heart Rate">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -49,7 +49,7 @@
             </intent-filter>
         </receiver>
         
-        <receiver android:name=".SpO2WidgetProvider" android:exported="true">
+        <receiver android:name=".SpO2WidgetProvider" android:exported="true" android:label="SpO2">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -59,7 +59,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".BodyTempWidgetProvider" android:exported="true">
+        <receiver android:name=".BodyTempWidgetProvider" android:exported="true" android:label="Body Temp">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -69,7 +69,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".SleepWidgetProvider" android:exported="true">
+        <receiver android:name=".SleepWidgetProvider" android:exported="true" android:label="Sleep">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -79,7 +79,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".ActivityWidgetProvider" android:exported="true">
+        <receiver android:name=".ActivityWidgetProvider" android:exported="true" android:label="Activity">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

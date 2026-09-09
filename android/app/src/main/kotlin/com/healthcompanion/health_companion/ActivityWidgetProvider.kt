@@ -7,6 +7,9 @@ import android.os.Bundle
 import android.widget.RemoteViews
 import es.antonborri.home_widget.HomeWidgetProvider
 
+import android.app.PendingIntent
+import android.content.Intent
+
 class ActivityWidgetProvider : HomeWidgetProvider() {
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray, widgetData: SharedPreferences) {
@@ -30,6 +33,10 @@ class ActivityWidgetProvider : HomeWidgetProvider() {
                 setProgressBar(R.id.pb_activity, 10000, 0, false)
                 setTextViewText(R.id.tv_progress_pct, "0%")
             }
+            
+            val intent = Intent(context, MainActivity::class.java)
+            val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+            setOnClickPendingIntent(R.id.widget_root, pendingIntent)
         }
         appWidgetManager.updateAppWidget(widgetId, views)
     }
