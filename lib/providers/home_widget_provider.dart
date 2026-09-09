@@ -36,9 +36,16 @@ class HomeWidgetSyncService {
         final sleepHr = activity.sleepDurationMinutes ~/ 60;
         final sleepMin = activity.sleepDurationMinutes % 60;
         await HomeWidget.saveWidgetData<String>('steps', activity.steps.toString());
-        await HomeWidget.saveWidgetData<String>('sleep', '${sleepHr}h ${sleepMin}m');
+        await HomeWidget.saveWidgetData<String>('sleep_h', sleepHr.toString());
+        await HomeWidget.saveWidgetData<String>('sleep_m', sleepMin.toString());
 
-        await HomeWidget.updateWidget(name: 'HealthWidgetProvider');
+        await Future.wait([
+          HomeWidget.updateWidget(name: 'HeartRateWidgetProvider'),
+          HomeWidget.updateWidget(name: 'SpO2WidgetProvider'),
+          HomeWidget.updateWidget(name: 'BodyTempWidgetProvider'),
+          HomeWidget.updateWidget(name: 'SleepWidgetProvider'),
+          HomeWidget.updateWidget(name: 'ActivityWidgetProvider'),
+        ]);
       } catch (e) {
         debugPrint("Home Widget Sync Error: $e");
       }
